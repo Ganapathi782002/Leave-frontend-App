@@ -2,7 +2,7 @@
 // This file contains a helper function for making API calls with JWT authentication
 
 // Define your backend base URL
-const API_BASE_URL = 'http://localhost:5000'; // Adjust if your backend URL or base path changes
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000'; // Adjust if your backend URL or base path changes
 
 // Helper function to get the token from localStorage
 const getToken = () => {
