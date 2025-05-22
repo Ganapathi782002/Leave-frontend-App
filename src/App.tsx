@@ -17,6 +17,7 @@ import ApplyLeave from "./pages/ApplyLeave";
 import LeaveApprovals from "./pages/LeaveApprovals";
 import AdminLeaveTypesPage from "./pages/AdminLeaveTypesPage";
 import AdminUsersPage from "./pages/AdminUsersPage"; // Make sure this component exists
+import LeaveCalendar from './pages/LeaveCalendar';
 
 function App() {
   return (
@@ -45,6 +46,10 @@ function App() {
           <Route
             path="/admin/users"
             element={<ProtectedRoute element={<AdminUsersPage />} />}
+          />
+          <Route
+            path="/calendar"
+            element={<ProtectedRoute element={<LeaveCalendar />} />}
           />
           {/* Redirect for the root path - redirects to dashboard if authenticated, or ProtectedRoute handles redirect to login */}
           <Route

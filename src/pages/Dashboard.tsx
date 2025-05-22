@@ -376,13 +376,17 @@ function Dashboard() {
              <p className="nav-link"> {/* Add CSS class */}
              <Link to="/admin/users">Manage Users</Link> {/* Link to Admin Users page */}
              </p>
-             {/* --- End ADDED --- */}
+             {/* --- End ADDED --- */}   
 
             {/* TODO: Add other admin-specific navigation links here */}
           </>
         )}
 
-        {/* TODO: Add more general navigation links here if needed */}
+        {isAuthenticated && ( // Or just rely on the !user check above the return statement
+          <p className="nav-link">
+            <Link to="/calendar">View Calendar</Link>
+          </p>
+        )}
 
       </div> {/* End dashboard-nav */}
 
