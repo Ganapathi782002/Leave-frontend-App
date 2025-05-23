@@ -1,26 +1,16 @@
 import React, { useEffect, useState } from "react";
-// Import useAuth hook to get authentication state and functions
 import { useAuth } from "../hooks/useAuth";
-// Import api helper for making backend API calls
 import api from "../api/api";
-// Import Link and useNavigate from react-router-dom for navigation
-import { Link, useNavigate } from "react-router-dom"; // <-- Ensure useNavigate is imported
-
-// Assuming you have a CSS file for styling (uncomment if you have one)
+import { Link, useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
 
 // --- Define Role IDs (These must match your backend/database 'roles' table exact role_id values) ---
 // Defined OUTSIDE the component function
 const ADMIN_ROLE_ID = 1;
-const EMPLOYEE_ROLE_ID = 2; // Corrected based on your table data (role_id 2)
-const MANAGER_ROLE_ID = 3; // Corrected based on your table data (role_id 3)
-const INTERN_ROLE_ID = 4; // Corrected based on your table data (role_id 4)
-// --- End Role IDs ---
-
-
-// --- Define Interfaces for Data Expected from Backend APIs and Context ---
-// Consider moving these to a shared types file (e.g., src/types.ts) later
+const EMPLOYEE_ROLE_ID = 2;
+const MANAGER_ROLE_ID = 3;
+const INTERN_ROLE_ID = 4; 
 
 // Expected structure of the user object received from the authentication context (useAuth hook)
 interface AuthUser {
@@ -29,7 +19,6 @@ interface AuthUser {
   email: string;
   role_id: number; // Include role_id for frontend access control and conditional rendering
   manager_id?: number | null; // Optional: if your user object includes manager_id
-  // Add any other properties your user object from auth context has
 }
 
 // Expected shape of the value returned by the useAuth hook
@@ -53,10 +42,8 @@ interface LeaveBalance {
     // Assuming leaveType is eager loaded in the backend relationship
     leaveType: {
         type_id: number;
-        name: string; // The name of the leave type (e.g., "Annual Leave")
-        // Include other LeaveType properties if needed (e.g., is_balance_based)
+        name: string;
     };
-    // Add other relevant balance properties if your entity has them
 }
 
 // Expected structure of a single leave request item received from the backend
@@ -76,15 +63,11 @@ interface LeaveRequest {
         name: string; // The name of the leave type
         // Include other LeaveType properties if needed
     };
-    // If this request history is for managers viewing ALL requests,
-    // the applicant user details might be eager loaded (optional property)
     applicant?: {
         user_id: number;
         name: string;
         email: string;
-        // Add other relevant user properties if needed
     };
-    // Add other properties of your Leave entity
 }
 
 // Expected structure of a single leave type item received from the backend (for Admin view)
@@ -95,17 +78,13 @@ interface LeaveType {
     is_balance_based: boolean;
     // Add other properties if your LeaveType entity has them
 }
-// --- End Interfaces ---
 
 
 function Dashboard() {
-  // Use the useAuth hook to get the current authentication state and functions
-  // We assert the type as AuthContextType for better type safety
-  // Ensure isAuthenticated and loading are destructured here
   const { user, token, logout, isAuthenticated, loading: authLoading } = useAuth() as unknown as AuthContextType; // <-- Corrected destructuring
 
   // Use useNavigate hook for programmatic navigation (e.g., after logout)
-  const navigate = useNavigate(); // <-- Ensure this is here
+  const navigate = useNavigate();
 
 
   // --- State for User's Leave Balances ---
@@ -124,27 +103,19 @@ function Dashboard() {
   const [errorAdminTypes, setErrorAdminTypes] = useState<string | null>(null);
 
 
-  // --- Role Checks for Conditional Rendering/Logic ---
   // Using optional chaining (?.) for safe access to user and role_id properties
   const isAdmin = user?.role_id === ADMIN_ROLE_ID;
   const isManagerOrAdmin = user && (user.role_id === MANAGER_ROLE_ID || user.role_id === ADMIN_ROLE_ID);
-  const isEmployeeOrIntern = user && (user.role_id === EMPLOYEE_ROLE_ID || user.role_id === INTERN_ROLE_ID); // Assuming Employee and Intern roles view their own leave data
+  const isEmployeeOrIntern = user && (user.role_id === EMPLOYEE_ROLE_ID || user.role_id === INTERN_ROLE_ID);
 
 
-  // --- Effect to Fetch User's Leave Balances ---
   useEffect(() => {
     // Define the async function to fetch balances
     const fetchLeaveBalances = async () => {
       setLoadingBalances(true); // Start loading
       setErrorBalances(null); // Clear previous errors
       try {
-        // Call the backend endpoint using the api helper (requires auth by default)
-        // Corrected URL to match backend: /api/leaves/balance
-        const balancesData: LeaveBalance[] = await api("/api/leaves/balance", "GET"); // <-- CORRECTED URL
-
-        // It's safer to process the data here to ensure correct types if needed
-        // Example: If total_days/used_days come as strings, convert them to numbers
-        // Your LeaveBalance entity maps decimal to string, so conversion is needed for calculations
+        const balancesData: LeaveBalance[] = await api("/api/leaves/balance", "GET");
         const processedBalances = balancesData.map(balance => ({
           ...balance,
           // Convert string decimals from backend to numbers for frontend calculations/display
@@ -182,7 +153,7 @@ function Dashboard() {
         setLoadingBalances(false);
     }
 
-  }, [token, user, authLoading, isAuthenticated, isAdmin]); // Dependencies: Re-run if token, user, authLoading, isAuthenticated, or isAdmin status changes
+  }, [token, user, authLoading, isAuthenticated, isAdmin]);
 
 
   // --- Effect to Fetch User's Leave Request History ---
@@ -192,8 +163,6 @@ function Dashboard() {
       setLoadingHistory(true); // Start loading
       setErrorHistory(null); // Clear previous errors
       try {
-        // Call the backend endpoint using the api helper (requires auth by default)
-        // Corrected URL to match backend: /api/leaves/my
         const historyData: LeaveRequest[] = await api("/api/leaves/my", "GET"); // <-- CORRECTED URL
 
         setUserLeaveRequests(historyData); // Set the fetched data
@@ -224,11 +193,6 @@ function Dashboard() {
     }
   }, [token, user, authLoading, isAuthenticated, isAdmin]); // Dependencies
 
-
-  // --- Effect to Fetch Admin Leave Types (for Admin role) ---
-  // Note: This effect fetches admin types but isn't strictly needed for the main Dashboard display for an Employee.
-  // It seems leftover or intended for a different purpose on this Dashboard page.
-  // Keeping it for now, but it might be unused or belong elsewhere.
   useEffect(() => {
     // Define the async function to fetch admin leave types
     const fetchAdminLeaveTypes = async () => {
@@ -271,7 +235,7 @@ function Dashboard() {
         setAdminLeaveTypes([]);
         setLoadingAdminTypes(false);
     }
-  }, [token, user, authLoading, isAuthenticated, isAdmin]); // Dependencies: Re-run if token, user, authLoading, isAuthenticated, or isAdmin status changes
+  }, [token, user, authLoading, isAuthenticated, isAdmin]);
 
 
   // --- Function to handle cancelling a leave request ---
@@ -283,10 +247,7 @@ function Dashboard() {
 
     try {
       console.log(`Dashboard: Attempting to cancel leave request ID: ${leaveId}`);
-      // Call the backend API to cancel the leave
-      // Assuming your backend has a PUT or DELETE endpoint like /api/leaves/my/:id/cancel or /api/leave/:id with status update
-      // This URL seems correct based on your leaveRoutes.ts
-      await api(`/api/leaves/my/${leaveId}/cancel`, "PUT"); // <-- URL appears correct based on leaveRoutes.ts
+      await api(`/api/leaves/my/${leaveId}/cancel`, "PUT");
 
       console.log(`Dashboard: Leave ID ${leaveId} cancelled successfully.`);
 
@@ -319,13 +280,9 @@ function Dashboard() {
 
     // --- Navigate to the login page after logout ---
     // Use the navigate function obtained from useNavigate hook
-    navigate('/login'); // <-- UNCOMMENTED: Ensure this line is NOT commented out!
+    navigate('/login');
   };
 
-
-  // --- Render Logic ---
-
-  // While authentication state is loading from localStorage, show a loading message
   if (authLoading) {
     return <div className="dashboard-loading">Loading authentication state...</div>; // Add CSS class
   }
@@ -335,26 +292,25 @@ function Dashboard() {
   if (!user) {
     // Redirecting is handled by ProtectedRoute, so this component shouldn't render in unauthenticated state after loading
     // However, you could show a brief message or spinner here if needed.
-    return <div className="dashboard-unauthenticated">Not authenticated. Redirecting...</div>; // Add CSS class
+    return <div className="dashboard-unauthenticated">Not authenticated. Redirecting...</div>;
   }
 
 
   // If authentication is complete and user is available, render the main dashboard content
   return (
-    <div className="dashboard-container"> {/* Add CSS class for overall page layout */}
-      <h2 className="page-title">Dashboard</h2> {/* Page title */}
-      <p className="welcome-message">Welcome, <strong>{user.name}</strong>!</p> {/* Display the authenticated user's name */}
-      {/* Display the user's role name based on role_id */}
+    <div className="dashboard-container">
+      <h2 className="page-title">Dashboard</h2>
+      <p className="welcome-message">Welcome, <strong>{user.name}</strong>!</p>
 
       <hr /> {/* Separator line */}
 
 
       {/* --- Navigation Links Section --- */}
       <h3>Navigation</h3>
-      <div className="dashboard-nav"> {/* Add CSS class for navigation links styling */}
+      <div className="dashboard-nav">
 
         {!isAdmin && (
-          <p className="nav-link"> {/* Add CSS class */}
+          <p className="nav-link">
             <Link to="/apply-leave">Apply for Leave</Link>
           </p>
         )}
@@ -369,16 +325,12 @@ function Dashboard() {
         {/* Admin Specific Links - Conditionally rendered ONLY for Admin role */}
         {isAdmin && ( // <-- Check specifically for Admin role using the constant
           <> {/* Use a React Fragment to group multiple links without adding an extra DOM node */}
-            <p className="nav-link"> {/* Add CSS class */}
+            <p className="nav-link">
               <Link to="/admin/leave-types">Manage Leave Types</Link> {/* Link to Admin Leave Types page */}
             </p>
-            {/* --- ADDED: Link to Admin Users Page --- */}
-             <p className="nav-link"> {/* Add CSS class */}
+             <p className="nav-link">
              <Link to="/admin/users">Manage Users</Link> {/* Link to Admin Users page */}
              </p>
-             {/* --- End ADDED --- */}   
-
-            {/* TODO: Add other admin-specific navigation links here */}
           </>
         )}
 
@@ -388,7 +340,7 @@ function Dashboard() {
           </p>
         )}
 
-      </div> {/* End dashboard-nav */}
+      </div>
 
       <hr /> {/* Separator line */}
 
@@ -397,7 +349,7 @@ function Dashboard() {
       {/* Visible only to Employee and Intern roles based on typical leave tracking */}
       {/* Use the isEmployeeOrIntern boolean check */}
       {user?.role_id !== ADMIN_ROLE_ID && (
-        <div className="role-specific-section leave-balances-section"> {/* Add CSS class */}
+        <div className="role-specific-section leave-balances-section">
           <h3>Your Leave Balances</h3>
           {loadingBalances && <p className="loading-message">Loading leave balances...</p>} {/* Loading indicator */}
           {/* Display error message if loading is done, there's an error, and no balances were loaded */}
@@ -406,7 +358,7 @@ function Dashboard() {
           )}
           {/* Display balances table if loading is done, no error, and there are balances */}
           {!loadingBalances && !errorBalances && userLeaveBalances.length > 0 && (
-            <table className="leave-table balances-table"> {/* Add CSS classes for styling */}
+            <table className="leave-table balances-table">
               <thead>
                 <tr>
                   <th>Leave Type</th>
@@ -457,7 +409,7 @@ function Dashboard() {
           )}
           {/* Display history table if loading is done, no error, and there is history */}
           {!loadingHistory && !errorHistory && userLeaveRequests.length > 0 && (
-            <table className="leave-table history-table"> {/* Add CSS classes for styling */}
+            <table className="leave-table history-table">
               <thead>
                 <tr>
                   <th>Leave Type</th>
@@ -497,7 +449,7 @@ function Dashboard() {
                       {/* Render Cancel button only if status is Pending */}
                       {request.status === "Pending" && (
                         <button
-                          className="cancel-button" // Add CSS class
+                          className="cancel-button"
                           onClick={() => handleCancelLeave(request.leave_id)} // Attach handler with leave ID
                           disabled={loadingHistory} // Optionally disable while history is loading/updating
                         >
@@ -522,12 +474,12 @@ function Dashboard() {
 
 
       {/* --- Logout Button --- */}
-      <button className="logout-button" onClick={handleLogout}> {/* Add CSS class for styling */}
+      <button className="logout-button" onClick={handleLogout}>
         Logout {/* Button text */}
       </button>
 
 
-    </div> // End dashboard-container
+    </div>
   );
 }
 

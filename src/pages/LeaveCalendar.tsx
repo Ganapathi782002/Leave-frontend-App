@@ -110,9 +110,6 @@ function LeaveCalendar() {
     // Handler for calendar navigation (prev/next month, day, etc.)
     const handleNavigate = useCallback((newDate: Date) => {
         setCurrentDate(newDate);
-        // If your backend API for leave availability takes a date range,
-        // you would call fetchCalendarEvents() again here with the new date range.
-        // For now, assuming it fetches all approved leaves at once.
     }, []);
 
     // dayPropGetter for weekend styling
@@ -177,7 +174,7 @@ function LeaveCalendar() {
         <div className="leave-calendar-container">
             <h2 className="page-title">Leave Availability Calendar</h2>
             <div className="calendar-role-info">
-                {user.role_id === 1 && <p>As an **Admin**, you are viewing *all* approved leaves.</p>}
+                {user.role_id === 1 && <p>As an <strong>Admin</strong>, you are viewing all approved leaves.</p>}
                 {user.role_id === 3 && <p>As a **Manager**, you are viewing approved leaves for your *direct reports and your own*.</p>}
                 {(user.role_id === 2 || user.role_id === 4) && <p>As an **Employee/Intern**, you are viewing approved leaves for your *teammates, manager, and your own*.</p>}
             </div>

@@ -1,20 +1,16 @@
-// my-leave-app/src/pages/AdminUsersPage.tsx
-// Admin User Management Page component - Allows creating users and viewing lists of users by role.
-
-import React, { useState, useEffect, useMemo } from "react"; // Import useMemo
+import React, { useState, useEffect, useMemo } from "react";
 import { useAuth } from "../hooks/useAuth";
-import api from "../api/api"; // Assuming your API helper is here
+import api from "../api/api";
 import { Link } from "react-router-dom";
-import "./AdminUsersPage.css"; // Assuming you have AdminUsersPage.css for styling
+import "./AdminUsersPage.css";
 
 // --- Define Role IDs (These must match your backend/database role IDs) ---
 // Defined OUTSIDE the component function
 const ADMIN_ROLE_ID = 1;
-const EMPLOYEE_ROLE_ID = 2; // Corrected based on your table
+const EMPLOYEE_ROLE_ID = 2;
 const MANAGER_ROLE_ID = 3;
-const INTERN_ROLE_ID = 4; // Value is 4
+const INTERN_ROLE_ID = 4;
 
-// --- Define Interfaces for Data Expected from Backend APIs and Context ---
 // Consider moving these to a shared types file (e.g., src/types.ts) later
 
 // Expected structure of the user object from the authentication context (useAuth hook)
@@ -23,8 +19,7 @@ interface AuthUser {
   name: string;
   email: string;
   role_id: number; // Include role_id for frontend access control and conditional rendering
-  manager_id?: number | null; // Optional: if your user object includes manager_id
-  // Add any other properties your user object from auth context might have
+  manager_id?: number | null; // Optional: if  user object includes manager_id
 }
 
 interface UserResponse {
@@ -34,11 +29,9 @@ interface UserResponse {
   role_id: number;
   manager_id: number | null; // Include manager_id if applicable
   role: {
-    // Assuming your backend includes nested role details
     role_id: number;
-    name: string; // Assuming Role entity has a 'name' property
+    name: string;
   };
-  // Add other properties here if your backend UserResponse includes them
 }
 
 // Expected shape of the value returned by the useAuth hook
@@ -60,7 +53,6 @@ interface CreateUserRequestBody {
   manager_id?: number | null; // Optional: Allow assigning a manager during creation
 }
 
-// --- NEW Interface for GET /api/admin/users Response ---
 // This interface matches the expected structure from the backend
 interface UserWithBalancesResponse {
   user_id: number;
@@ -82,7 +74,6 @@ interface UserWithBalancesResponse {
     year: number; // Added year as it's included in the backend response
   }[]; // Array of balance summaries for the current year
 }
-// --- End NEW Interface ---
 
 function AdminUsersPage() {
   // Get user from authentication context
@@ -94,7 +85,7 @@ function AdminUsersPage() {
   } = useAuth() as AuthContextType; // <-- Add the type assertion
 
   // Check if the logged-in user is an Admin
-  const isAdmin = user?.role_id === ADMIN_ROLE_ID; // <-- This should now work
+  const isAdmin = user?.role_id === ADMIN_ROLE_ID;
 
   // --- State for Create User Form ---
   const [newUserName, setNewUserName] = useState("");
@@ -108,9 +99,7 @@ function AdminUsersPage() {
   const [createUserSuccess, setCreateUserSuccess] = useState<string | null>(
     null
   );
-  // --- End State: Create User Form ---
 
-  // --- State for Fetching and Displaying User Lists ---
   // Use the new interface for list states
   const [managersList, setManagersList] = useState<UserWithBalancesResponse[]>(
     []
@@ -132,7 +121,6 @@ function AdminUsersPage() {
   // --- End State: Lists ---
 
   // --- Function to Handle Create User Form Submission ---
-  // THIS FUNCTION WAS MISSING IN THE PREVIOUS CODE BLOCK - IT IS NOW INCLUDED
   const handleCreateUserSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
     setCreateUserLoading(true);
@@ -164,9 +152,7 @@ function AdminUsersPage() {
     };
 
     try {
-      console.log("Attempting to create user with data:", newUserData);
-      // Call the backend POST endpoint to create a user
-      // The backend is expected to return the created user details (UserResponse)
+      // console.log("Attempting to create user with data:", newUserData);
       const createdUser /*: UserResponse*/ = await api(
         // Specify type if needed, but backend likely returns UserResponse shape
         "/api/admin/users",
@@ -208,9 +194,6 @@ function AdminUsersPage() {
       setCreateUserLoading(false);
     }
   };
-  // --- End Function ---
-
-  // --- Function to Fetch Users by Role ---
   // This function fetches users based on the provided roleId (or all if undefined)
   const fetchUsersByRole = async (roleId?: number) => {
     setLoadingLists(true);
@@ -238,16 +221,16 @@ function AdminUsersPage() {
       } else {
         viewName = "All"; // No roleId means fetch all
       }
-      console.log(`Attempting to fetch user list from: ${endpoint}`);
+      // console.log(`Attempting to fetch user list from: ${endpoint}`);
 
       // Fetch users from the backend, expecting UserWithBalancesResponse[]
       const fetchedUsers: UserWithBalancesResponse[] = await api(
         endpoint,
         "GET"
       );
-      console.log(
-        `Workspaceed ${fetchedUsers.length} users for view: ${viewName}`
-      );
+      // console.log(
+      //   `Workspaceed ${fetchedUsers.length} users for view: ${viewName}`
+      // );
 
       // Update the correct state based on the fetched list
       if (roleId === MANAGER_ROLE_ID) {
@@ -324,23 +307,22 @@ function AdminUsersPage() {
     }
   };
 
-  // --- Effect to Fetch Initial Lists on Component Mount/Auth Change ---
   // This useEffect is now re-enabled and calls fetchUsersByRole
   useEffect(() => {
-    console.log("AdminUsersPage useEffect running...");
+    // console.log("AdminUsersPage useEffect running...");
     // Only fetch if authLoading is complete AND authenticated AND is Admin
     if (!authLoading) {
       if (isAuthenticated && isAdmin) {
-        console.log(
-          "Auth loading complete, user is Admin. Fetching initial lists..."
-        );
+        // console.log(
+        //   "Auth loading complete, user is Admin. Fetching initial lists..."
+        // );
         // Fetch initial lists when component mounts and auth is confirmed
         fetchUsersByRole(MANAGER_ROLE_ID); // Fetch managers for the dropdown on load
         fetchUsersByRole(); // Fetch all users for the default list display on load
       } else {
-        console.log(
-          "Auth loading complete, user is not Admin or not authenticated."
-        );
+        // console.log(
+        //   "Auth loading complete, user is not Admin or not authenticated."
+        // );
         // If auth loading done but not authorized, stop loading indicator for lists
         setLoadingLists(false);
         // Optionally set an error message to display
@@ -348,7 +330,7 @@ function AdminUsersPage() {
       }
     }
     console.log("AdminUsersPage useEffect finished.");
-  }, [token, user, isAdmin, authLoading, isAuthenticated]); // Dependencies: Re-run when these change
+  }, [token, user, isAdmin, authLoading, isAuthenticated]);
 
   // Determine which list to display based on currentListView state
   const listToDisplay: UserWithBalancesResponse[] = useMemo(() => {
@@ -380,18 +362,14 @@ function AdminUsersPage() {
       </div>
     );
   }
-  // --- End Frontend Role Check ---
 
   // If we reached here, the user is an Admin and Authenticated
   return (
     <div className="admin-users-container">
       {" "}
-      {/* Add CSS class */}
       <h2>Admin User Management</h2>
-      {/* --- Create New User Form Section --- */}
       <div className="create-user-form">
         {" "}
-        {/* Add CSS class */}
         <h3>Create New User</h3>
         {/* This form now correctly references handleCreateUserSubmit */}
         <form onSubmit={handleCreateUserSubmit}>
@@ -472,9 +450,6 @@ function AdminUsersPage() {
                   </option>
                 ))}
               </select>
-              {/* You could add loading/error indicators specific to the manager dropdown fetch if needed */}
-              {/* {loadingLists && currentListView === "Managers" && <p>Loading managers...</p>} */}
-              {/* {errorLists && currentListView === "Managers" && <p style={{ color: "red" }}>Error loading managers for dropdown.</p>} */}
             </div>
           )}
           {/* --- End Conditional Render --- */}
@@ -492,18 +467,13 @@ function AdminUsersPage() {
           <p style={{ color: "green" }}>{createUserSuccess}</p>
         )}
       </div>
-      {/* --- End Create New User Form Section --- */}
       <hr /> {/* Separator */}
-      {/* --- User Lists Section (Now Implemented) --- */}
-      {/* This section replaces the previous TODO comments */}
       <div className="admin-user-lists">
         {" "}
-        {/* Add CSS class */}
         <h3>User Lists</h3>
         {/* Buttons to trigger fetching/displaying lists by role */}
         <div className="user-list-buttons">
           {" "}
-          {/* Add CSS class */}
           {/* Buttons call fetchUsersByRole with appropriate role ID or none for all */}
           <button onClick={() => fetchUsersByRole()} disabled={loadingLists}>
             {loadingLists && currentListView === "All"
@@ -550,22 +520,18 @@ function AdminUsersPage() {
         {!loadingLists && !errorLists && listToDisplay.length > 0 && (
           <div className="user-list-display">
             {" "}
-            {/* Add CSS class */}
             {/* Display the title for the currently viewed list */}
             <h4>
               {currentListView || "All"} List ({listToDisplay.length} users)
             </h4>
             <ul className="user-list">
               {" "}
-              {/* Add CSS class for the list container */}
               {/* Map through the listToDisplay (which is determined by currentListView) */}
               {listToDisplay.map((user) => (
                 <li key={user.user_id} className="user-item">
                   {" "}
-                  {/* Add CSS class for each user item */}
                   <div className="user-main-info">
                     {" "}
-                    {/* Add CSS class for user's primary info */}
                     <strong>{user.name}</strong> ({user.role.name}) - ID:{" "}
                     {user.user_id}
                     {/* Display manager if exists */}
@@ -574,8 +540,7 @@ function AdminUsersPage() {
                   {/* Display Leave Balances for the user */}
                   <div className="user-leave-balances">
                     {" "}
-                    {/* Add CSS class for balances section */}
-                    {/* Assuming year is same for all balances for a user, display year from the first balance */}
+                    {/* year is same for all balances for a user, display year from the first balance */}
                     <h5>
                       Leave Balances{" "}
                       {user.leaveBalances.length > 0
@@ -585,7 +550,6 @@ function AdminUsersPage() {
                     {user.leaveBalances.length > 0 ? (
                       <ul className="balance-list">
                         {" "}
-                        {/* Add CSS class for the balances sub-list */}
                         {/* Map through each leave balance for this user */}
                         {user.leaveBalances.map((balance) => (
                           <li key={`${user.user_id}-${balance.leaveTypeName}`}>
@@ -616,7 +580,6 @@ function AdminUsersPage() {
             <p>No {currentListView.toLowerCase()} found in the system.</p>
           )}
       </div>
-      {/* --- End User Lists Section --- */}
       <hr /> {/* Separator */}
       <p>
         <Link to="/dashboard">Back to Dashboard</Link>

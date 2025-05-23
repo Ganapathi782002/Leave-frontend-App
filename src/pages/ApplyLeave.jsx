@@ -1,16 +1,11 @@
-// src/pages/ApplyLeave.jsx
-import React, { useState, useEffect } from "react"; // Import useEffect
-// Import useAuth hook
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-// Import api helper for submitting data
 import api from "../api/api";
-// Import useNavigate for redirection
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link } from "react-router-dom";
 import "./ApplyLeave.css";
 
 function ApplyLeave() {
-  // State for form inputs
   const [leaveType, setLeaveType] = useState(""); // This will hold the selected type_id (integer)
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -101,13 +96,10 @@ function ApplyLeave() {
     };
 
     try {
-      // Use the api helper to send the leave request to the backend
-      // It automatically adds the JWT Authorization header
-      // Assuming backend endpoint is /api/leaves
       const responseData = await api("/api/leaves", "POST", leaveData);
 
       console.log("Leave request submitted successfully:", responseData);
-      setSuccess(true); // Indicate success to the user
+      setSuccess(true);
 
       // Optional: Clear the form after successful submission
       setLeaveType("");
@@ -140,7 +132,6 @@ function ApplyLeave() {
 
       <div className="leave-info-message">
         {" "}
-        {/* Added CSS class */}
         <p>
           <strong>Please note:</strong> Leave duration is calculated based on
           Working days. Weekends (Saturdays and Sundays) are automatically
@@ -149,7 +140,6 @@ function ApplyLeave() {
       </div>
       <div className="leave-info-approval-rule">
         {" "}
-        {/* Using a NEW CSS class */}
         <p>
           <strong>Important:</strong>Leave requests
           exceeding 5 working days require approval from both your Manager and

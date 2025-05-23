@@ -1,9 +1,6 @@
-/* my-leave-app/src/pages/LoginPage.css */
-
-/* Styling for the main container holding the login form */
 .login-container {
-    max-width: 400px; /* Limit the width of the login form container */
-    margin: 80px auto; /* Center the container vertically and horizontally with auto margins */
+    max-width: 400px;
+    margin: 80px auto;
     padding: 30px; /* Add padding inside the container */
     background-color: #ffffff; /* White background */
     border-radius: 8px; /* Rounded corners */

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import api from "../api/api"; // Assuming your API helper is here
+import api from "../api/api";
 import { Link } from "react-router-dom";
 import './AdminLeaveTypesPage.css'
 // Define the interface for the LeaveType data expected from the backend
@@ -9,7 +9,7 @@ interface LeaveType {
   type_id: number;
   name: string;
   requires_approval: boolean;
-  is_balance_based: boolean; // Add any other properties of your LeaveType entity
+  is_balance_based: boolean;
 }
 
 // Define the expected type for the user object from the auth context
@@ -17,11 +17,10 @@ interface AuthUser {
   user_id: number;
   name: string;
   email: string;
-  role_id: number; // We need role_id for frontend access control // Add any other properties your user object from auth context has
+  role_id: number; 
 }
 
-// Define role IDs (should match your backend/database role IDs)
-const ADMIN_ROLE_ID = 1; // <-- Define Admin Role ID here or import it
+const ADMIN_ROLE_ID = 1;
 
 // --- Single, Correct AdminLeaveTypesPage Function Component ---
 function AdminLeaveTypesPage() {
@@ -30,12 +29,12 @@ function AdminLeaveTypesPage() {
   const { user, token, isAuthenticated, loading, login, logout } =
     useAuth() as {
       user: AuthUser | null; // Assert the type for the user property
-      token: string | null; // Assert the type for the token property // Include other properties returned by useAuth that you might use
+      token: string | null; // Assert the type for the token property 
       isAuthenticated: boolean;
-      loading: boolean; // Assuming this is part of your auth state loading
-      login: (newToken: string, newUser: any) => void; // Assuming login function exists in context
-      logout: () => void; // Assuming logout function exists in context
-    }; // State for the list of leave types (using its own loading/error state)
+      loading: boolean;
+      login: (newToken: string, newUser: any) => void;
+      logout: () => void;
+    }; 
 
   const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([]); // Note: Using 'loadingLeaveTypes' and 'errorLeaveTypes' here for the leave types fetch specifically,
   // distinct from the auth 'loading' state from useAuth.
@@ -44,7 +43,6 @@ function AdminLeaveTypesPage() {
   const [actionError, setActionError] = useState<string | null>(null); //For deleting leave types.
   const [actionSuccess, setActionSuccess] = useState<string | null>(null); //For deleting leavetypes.
   const [isDeleting, setIsDeleting] = useState(false); //For deleting leavetypes.
-  // --- New State for the Create Leave Type Form ---
   const [newLeaveTypeName, setNewLeaveTypeName] = useState("");
   const [newLeaveTypeRequiresApproval, setNewLeaveTypeRequiresApproval] =
     useState(true); // Default to true
@@ -56,8 +54,7 @@ function AdminLeaveTypesPage() {
   >(null);
   const [createLeaveTypeSuccess, setCreateLeaveTypeSuccess] = useState<
     string | null
-  >(null); // Check if the logged-in user is an Admin (using the user from the asserted useAuth) // Using optional chaining for safe access to role_id
-  // --- End New State ---
+  >(null);
 
   const isAdmin = user?.role_id === ADMIN_ROLE_ID;
 
@@ -70,7 +67,7 @@ function AdminLeaveTypesPage() {
       // Make the API call to the backend admin endpoint
       const typesData: LeaveType[] = await api("/api/admin/leave-types", "GET");
       setLeaveTypes(typesData);
-      console.log("Fetched leave types for admin:", typesData);
+      // console.log("Fetched leave types for admin:", typesData);
     } catch (err: any) {
       console.error("Error fetching leave types for admin:", err);
       // Check if the error is a Forbidden error (403) or Unauthorized (401)
@@ -80,7 +77,7 @@ function AdminLeaveTypesPage() {
       ) {
         // These errors are expected if user is not admin or not fully authenticated
         // Don't set a generic error message here, as the UI handles access denied separately
-        console.log("Access denied or unauthorized for admin endpoint.");
+        // console.log("Access denied or unauthorized for admin endpoint.");
       } else {
         // Handle other types of fetch errors (e.g., network, server 500)
         setErrorLeaveTypes(err.message || "Failed to fetch leave types.");
@@ -91,9 +88,6 @@ function AdminLeaveTypesPage() {
   };
 
   useEffect(() => {
-    // Only attempt to fetch if the user is authenticated and confirmed as Admin,
-    // and the auth loading is complete.
-    // Use the 'loading' variable from the destructured useAuth() call
     if (!loading && token && user && user.role_id === ADMIN_ROLE_ID) {
       fetchLeaveTypes(); // Call the fetch function
     } else {
@@ -130,8 +124,7 @@ function AdminLeaveTypesPage() {
             'DELETE' // Use the DELETE HTTP method
         );
 
-        console.log(`Leave type ${typeId} deleted:`, response);
-        // Show a success message
+        //console.log(`Leave type ${typeId} deleted:`, response);
         setActionSuccess(response.message || `Leave type "${typeName}" deleted successfully.`);
 
         // --- Update the UI: Remove the deleted leave type from the list ---
@@ -151,7 +144,6 @@ function AdminLeaveTypesPage() {
     }
   };
 
-  // --- New Function to Handle Create Leave Type Form Submission ---
   const handleCreateLeaveTypeSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
     setCreateLeaveTypeLoading(true);
@@ -179,7 +171,7 @@ function AdminLeaveTypesPage() {
         newTypeData
       );
 
-      console.log("New leave type created:", createdType);
+      // console.log("New leave type created:", createdType);
       setCreateLeaveTypeSuccess(
         `Leave type "${createdType.name}" created successfully!`
       );
@@ -206,14 +198,13 @@ function AdminLeaveTypesPage() {
       setCreateLeaveTypeLoading(false);
     }
   };
-  // --- End New Function ---
 
   // Render content based on auth loading, user status, and leave types loading/error
   // Handle initial auth loading state from the context first
   if (loading) {
     // <-- Use the 'loading' variable from the destructured useAuth() call
     return <div className="admin-loading-message">Loading authentication state...</div>;
-  } // --- Frontend Role Check (Optional but good practice) --- // If the user is logged in but not an Admin, show a forbidden message
+  } // --- Frontend Role Check (Optional but good practice)
 
   // This check happens AFTER initial auth loading is complete (checked above)
   if (!isAdmin) {
@@ -227,14 +218,11 @@ function AdminLeaveTypesPage() {
         </p>
       </div>
     );
-  } // --- End Frontend Role Check ---
-  // If we reached here, the user is an Admin (and auth loading is complete)
+  }
   return (
     <div className="admin-leave-types-container">
       <h2>Manage Leave Types</h2>
-      {/* --- New Create Leave Type Form --- */}
       <div className="create-leave-type-form-section">
-        {/* Add CSS class later */}
         <h3>Create New Leave Type</h3>
         <form onSubmit={handleCreateLeaveTypeSubmit} className="create-leave-type-form">
           <div className="form-group">
@@ -283,9 +271,7 @@ function AdminLeaveTypesPage() {
           <p className="success-message">{createLeaveTypeSuccess}</p>
         )}
       </div>
-      {/* --- End New Create Leave Type Form --- */}
       <hr /> {/* Separator */}
-      {/* Existing Display Leave Types Section */}
       <h3>All Leave Types</h3>
       {loadingLeaveTypes && <p className="loading-message">Loading leave types...</p>}{" "}
       {/* Use state for leave types fetch */}
@@ -299,18 +285,16 @@ function AdminLeaveTypesPage() {
         leaveTypes.length > 0 && ( // Check state for leave types fetch
           <div className="existing-leave-types-section">
             {" "}
-            {/* Add CSS class later */}
-            {/* You can display this in a table or list */}
+            
             <table className="leave-types-table">
               {" "}
-              {/* Add CSS class later */}{" "}
+              {" "}
               <thead>
                 <tr>
                   <th>ID</th>
                   <th>Name</th>
                   <th>Requires Approval</th>
                   <th>Balance Based</th>
-                  {/* Add headers for other properties */}
                    <th>Actions</th> {/* For Edit/Delete buttons */}
                 </tr>
               </thead>
@@ -323,7 +307,6 @@ function AdminLeaveTypesPage() {
                     {" "}
                     <td className={type.is_balance_based ? 'boolean-yes' : 'boolean-no'}>{type.is_balance_based ? "Yes" : "No"}</td>
                     <td>
-                      {/* TODO: Add Edit and Delete buttons here */}
                       <button onClick={() => handleDeleteLeaveType(type.type_id, type.name)} className="delete-button" disabled={createLeaveTypeLoading}>Delete</button>
                     </td>
                   </tr>

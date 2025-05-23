@@ -1,6 +1,5 @@
-// src/components/ProtectedRoute.jsx
 import React from 'react';
-import { Navigate } from 'react-router-dom'; // Import Navigate for redirection
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 // ProtectedRoute component takes the element (the component to render) as a prop

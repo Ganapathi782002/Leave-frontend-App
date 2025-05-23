@@ -1,6 +1,6 @@
-// src/pages/Register.jsx
-import React, { useState } from "react"; // Import useState hook
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+//Actually this component is not used in our project.
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/api";
 
 function Register() {
@@ -12,11 +12,11 @@ function Register() {
   const [success, setSuccess] = useState(false); // To show success message
 
   // Call the useNavigate hook to get the navigate function
-  const navigate = useNavigate(); // <-- ADD THIS LINE
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     // Made function async
-    e.preventDefault(); // Prevent default browser form submission
+    e.preventDefault();
 
     // Clear previous messages
     setError(null);
@@ -28,7 +28,6 @@ function Register() {
       email,
       password,
       role_id: 2, // TODO: This is hardcoded for 'Employee' role for now.
-      // You'll need logic to assign roles or let admin do it later.
     };
 
     try {

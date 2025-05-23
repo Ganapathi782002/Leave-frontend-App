@@ -1,23 +1,17 @@
-// my-leave-app/src/App.tsx
-
 import React from "react";
-// Import BrowserRouter and alias it as Router for clarity
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
-// Assuming AuthProvider is correctly implemented and exported from AuthContext.jsx
 import { AuthProvider } from "./context/Authcontext";
-
-// Assuming ProtectedRoute component is implemented and exported
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// Import your page components
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ApplyLeave from "./pages/ApplyLeave";
 import LeaveApprovals from "./pages/LeaveApprovals";
 import AdminLeaveTypesPage from "./pages/AdminLeaveTypesPage";
-import AdminUsersPage from "./pages/AdminUsersPage"; // Make sure this component exists
+import AdminUsersPage from "./pages/AdminUsersPage";
 import LeaveCalendar from './pages/LeaveCalendar';
+import { ToastContainer } from 'react-toastify'; // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
 
 function App() {
   return (
@@ -57,6 +51,7 @@ function App() {
             element={<ProtectedRoute element={<Dashboard />} />}
           />
         </Routes>
+        <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
       </div>
     </Router>
   );

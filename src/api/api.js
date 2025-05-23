@@ -1,8 +1,4 @@
-// src/api/api.js
-// This file contains a helper function for making API calls with JWT authentication
-
-// Define your backend base URL
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000'; // Adjust if your backend URL or base path changes
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000'; // Adjust if backend URL or base path changes
 
 // Helper function to get the token from localStorage
 const getToken = () => {
@@ -12,10 +8,9 @@ const getToken = () => {
 // Helper function to handle logout (we'll use the AuthContext logout later)
 // For now, a simple localStorage clear and redirect placeholder
 const handleLogout = () => {
-  console.log('API helper detected authentication issue, logging out...');
+  // console.log('API helper detected authentication issue, logging out...');
   localStorage.removeItem('token');
   localStorage.removeItem('user');
-  // TODO: Redirect to login page - cannot use useNavigate here directly
   // You would typically dispatch a logout action or use window.location
   window.location.href = '/login'; // Simple redirect for now
 };
@@ -68,31 +63,31 @@ const api = async (endpoint, method, data = null, requiresAuth = true) => {
   try {
     const response = await fetch(url, options);
 
-    // Handle specific authentication errors (401 Unauthorized, 403 Forbidden)
-    if (response.status === 401 || response.status === 403) {
-        console.error(`Authentication error: ${response.status}`);
-        handleLogout(); // Log out user on auth failure
-        // Throw an error to be caught by the caller
-        throw new Error('Authentication failed. Please log in again.');
-    }
-
-    // Check if the response status is not in the 200-299 range
-    if (!response.ok) {
+    if (!response.ok) { // This covers 400, 401, 403, 404, 500 etc.
       const errorData = await response.json().catch(() => ({ message: response.statusText })); // Try to parse error message
-      console.error(`API Error: ${response.status} - ${errorData.message}`);
-      // Throw an error with details
-      throw new Error(errorData.message || `API request failed with status ${response.status}`);
-    }
+      if ((response.status === 401 || response.status === 403) && requiresAuth) {
+          console.error(`Authentication error on protected route: ${response.status}`);
+          handleLogout(); // This is the correct place to logout due to token invalidation
+          // Re-throw so the component also gets the error message
+          throw { response: { data: errorData, status: response.status } }; // Throw structured error for frontend
+      }
 
-    // Parse and return the JSON response
-    // Handle cases where the response might be empty (e.g., 204 No Content)
+      // For all other non-OK responses (including 401 on login endpoint, 400, 500 etc.)
+      console.error(`API Error: ${response.status} - ${errorData.message}`);
+      throw { response: { data: errorData, status: response.status } }; // Throw structured error for frontend
+    }
     const text = await response.text();
-    return text ? JSON.parse(text) : {}; // Return empty object for empty responses
+    return text ? JSON.parse(text) : {};
 
   } catch (error) {
-    console.error('Network or API call error:', error);
-    // Re-throw the error so the calling component can handle it
-    throw error;
+    if (error && typeof error === 'object' && 'response' in error) {
+      console.error('API call re-throwing structured error:', error);
+      throw error;
+    } else {
+      console.error('Network or unexpected API call error:', error);
+      // For network errors or unexpected errors, create a generic error object.
+      throw { message: 'Network error or unexpected API issue.', originalError: error };
+    }
   }
 };
 

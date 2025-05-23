@@ -1,14 +1,5 @@
-// src/context/AuthContext.jsx
-// This file defines the Authentication Context and Provider component.
-// It manages authentication state (user, token, loading) and provides login/logout functions.
-// It uses localStorage for persistence but does NOT handle navigation directly.
-
 import React, { createContext, useState, useEffect } from "react";
-// REMOVED: import { useNavigate } from 'react-router-dom'; // <-- Ensure this import is removed
 
-// --- Define the expected shape of the Auth Context value ---
-// This helps with type hinting when using the context (especially in TypeScript)
-// Adjust the user property type based on your AuthUser interface if applicable
 const AuthContext = createContext({
   user: null, // Can be null or your AuthUser object
   token: null, // Can be null or a string
@@ -23,22 +14,18 @@ const AuthContext = createContext({
     console.warn("Logout function not provided by AuthProvider");
   },
 });
-// --- End Context Shape Definition ---
 
-// --- The Auth Provider Component ---
-// This component wraps parts of your app that need access to the auth context.
-// It fetches initial state from localStorage and manages updates.
 export const AuthProvider = ({ children }) => {
   // State to hold the current authenticated user object and JWT token
   const [user, setUser] = useState(null); // Holds the user object (or null)
-  const [token, setToken] = useState(null); // Holds the JWT token string (or null) // State to indicate if the initial loading process (checking localStorage) is complete // Starts as true, set to false after the useEffect finishes
+  const [token, setToken] = useState(null); // Holds the JWT token string (or null) 
 
-  const [loading, setLoading] = useState(true); // True while checking localStorage // REMOVED: const navigate = useNavigate(); // <-- Ensure this line is removed // Effect to check for an existing token and user in localStorage when the provider mounts
+  const [loading, setLoading] = useState(true); // True while checking localStorage 
 
   useEffect(() => {
-    console.log(
-      "AuthProvider useEffect: Checking localStorage for existing session..."
-    );
+    // console.log(
+    //   "AuthProvider useEffect: Checking localStorage for existing session..."
+    // );
     const storedToken = localStorage.getItem("token"); // Retrieve token
     const storedUser = localStorage.getItem("user"); // Retrieve user string
 
@@ -48,9 +35,9 @@ export const AuthProvider = ({ children }) => {
         const parsedUser = JSON.parse(storedUser); // If parsing is successful, set the state
         setToken(storedToken);
         setUser(parsedUser);
-        console.log(
-          "AuthProvider useEffect: Found existing token and user in localStorage. State set."
-        );
+        // console.log(
+        //   "AuthProvider useEffect: Found existing token and user in localStorage. State set."
+        // );
       } catch (error) {
         // If there's an error parsing the stored user data (e.g., it's corrupted)
         console.error(
@@ -67,14 +54,14 @@ export const AuthProvider = ({ children }) => {
       }
     } else {
       // If no token or user was found in localStorage
-      console.log(
-        "AuthProvider useEffect: No existing token or user found in localStorage."
-      );
+      // console.log(
+      //   "AuthProvider useEffect: No existing token or user found in localStorage."
+      // );
     } // Regardless of whether data was found, the initial loading is now complete
     setLoading(false);
-    console.log(
-      "AuthProvider useEffect: Initial loading complete. Loading state set to false."
-    );
+    // console.log(
+    //   "AuthProvider useEffect: Initial loading complete. Loading state set to false."
+    // );
   }, []); // The empty dependency array ensures this effect runs only once after the initial render // Function to handle user login. Called by components (e.g., Login page) after successful authentication API call. // This function updates the state and localStorage, but does NOT handle navigation.
 
   const login = (newToken, newUser) => {
@@ -100,9 +87,9 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    console.log(
-      "AuthContext logout: User state and localStorage cleared. Navigation to login page should happen in the calling component."
-    ); // REMOVED: navigate('/login'); // <-- Ensure this line is removed
+    // console.log(
+    //   "AuthContext logout: User state and localStorage cleared. Navigation to login page should happen in the calling component."
+    // ); // REMOVED: navigate('/login'); // <-- Ensure this line is removed
   }; // The value object that will be provided to any component consuming this context
 
   const contextValue = {
@@ -123,15 +110,12 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// --- Export the Auth Context ---
-// Components can use useContext(AuthContext) to access the value,
-// or use a custom hook (like useAuth) which is the recommended pattern.
 export default AuthContext;
 
 // --- Optional: Custom Hook to Consume the Auth Context ---
-// If you define your useAuth hook in a separate file (e.g., hooks/useAuth.js),
+// If define your useAuth hook in a separate file (e.g., hooks/useAuth.js),
 // ensure it correctly uses useContext(AuthContext).
-// If you want to define it here, uncomment the code below.
+// If want to define it here, uncomment the code below.
 /*
 import { useContext } from 'react'; // Need useContext here
 export const useAuth = () => {

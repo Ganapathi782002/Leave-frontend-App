@@ -1,18 +1,15 @@
-// my-leave-app/src/pages/LeaveApprovals.tsx
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import api from '../api/api';
 import { Link } from 'react-router-dom';
-import './LeaveApprovals.css'; // Assuming you have a CSS file
+import './LeaveApprovals.css';
 
-// Define interfaces for the data we expect from the backend
-// Ensure these match your backend entity structures and response types
 interface Leave {
     leave_id: number;
     user_id: number;
     type_id: number;
-    start_date: string; // Assuming ISO string format from backend
-    end_date: string;   // Assuming ISO string format from backend
+    start_date: string;
+    end_date: string; 
     reason: string;
     // Include all possible statuses from your backend LeaveStatus enum
     status: 'Pending' | 'Approved' | 'Rejected' | 'Cancelled' | 'Awaiting_Admin_Approval';
@@ -29,14 +26,7 @@ interface Leave {
         name: string;
         email: string;
         role_id: number; // Include role_id if needed for display logic
-        // Add manager_id if you need to display who their manager is
-        // manager_id?: number | null;
     };
-    // Add processedBy relation details if eager loaded in backend fetch handler
-    // processedBy?: {
-    //   user_id: number;
-    //   name: string;
-    // };
 }
 
 interface ErrorResponse {
@@ -67,11 +57,8 @@ interface AuthContextType {
     logout: () => void;
 }
 
-
-// Define role IDs (these should match your backend/database role IDs)
-// Make sure these constants are correct based on your database setup
-const MANAGER_ROLE_ID = 3; // Example role ID for Manager
-const ADMIN_ROLE_ID = 1;   // Example role ID for Admin
+const MANAGER_ROLE_ID = 3;
+const ADMIN_ROLE_ID = 1;
 
 
 function LeaveApprovals() {
@@ -109,7 +96,7 @@ function LeaveApprovals() {
                     console.log('Fetching pending requests for Manager from:', endpoint);
                 } else if (user?.role_id === ADMIN_ROLE_ID) {
                     // Admins fetch leaves needing Admin attention (status: Pending (Manager self) or Awaiting_Admin_Approval)
-                    endpoint = '/api/admin/leave-requests/approvals-needed'; // <-- Call the NEW Admin fetch endpoint
+                    endpoint = '/api/admin/leave-requests/approvals-needed';
                     console.log('Fetching pending requests for Admin from:', endpoint);
                 } else {
                     // If not Manager or Admin, they shouldn't even be on this page due to frontend check,
@@ -154,11 +141,6 @@ function LeaveApprovals() {
         // Include dependencies that should re-run the effect
     }, [token, user, isManagerOrAdmin, MANAGER_ROLE_ID, ADMIN_ROLE_ID]);
 
-
-    // --- START: Modified Handlers for Approve/Reject Actions ---
-
-    // NEW: Single Handler for Processing Leave (Approve or Reject)
-    // This handler will determine the correct backend endpoint based on the user's role
     const handleProcessLeave = async (leaveId: number, status: 'Approved' | 'Rejected') => {
         // Ensure user is logged in and has a role before proceeding (should be covered by checks elsewhere, but defensive)
         if (!user || !user.role_id) {
@@ -179,7 +161,7 @@ function LeaveApprovals() {
                 console.log(`Processing leave ${leaveId} as Manager. Calling endpoint: ${endpoint}`);
             } else if (user.role_id === ADMIN_ROLE_ID) {
                 // Admins use the /api/admin/leave-requests/:id/status endpoint for leaves needing Admin attention
-                endpoint = `/api/admin/leave-requests/${leaveId}/status`; // <-- Call the NEW Admin update endpoint
+                endpoint = `/api/admin/leave-requests/${leaveId}/status`;
                 console.log(`Processing leave ${leaveId} as Admin. Calling endpoint: ${endpoint}`);
             } else {
                 // Should not happen based on frontend role check, but defensive
@@ -197,7 +179,7 @@ function LeaveApprovals() {
 
 
             // Call the determined backend endpoint with the status
-            // Note: Ensure your backend handlers return UpdateLeaveStatusSuccessResponse or an error structure
+            // Note: Ensure backend handlers return UpdateLeaveStatusSuccessResponse or an error structure
             const response: UpdateLeaveStatusSuccessResponse = await api(
                 endpoint, // Use the dynamically determined endpoint
                 'PUT',
@@ -206,10 +188,6 @@ function LeaveApprovals() {
 
             console.log(`Leave request ${leaveId} processed with status ${status}:`, response);
             setActionSuccess(`Leave request ${leaveId} ${status.toLowerCase()} successfully.`);
-
-            // Optimistically update the UI: Remove the processed request from the list
-            // This filter assumes that once approved/rejected by EITHER Manager or Admin via this page,
-            // the item should no longer appear in the pending list for that user.
             setPendingLeaves(prevLeaves => prevLeaves.filter(leave => leave.leave_id !== leaveId));
 
 
@@ -234,8 +212,6 @@ function LeaveApprovals() {
         await handleProcessLeave(leaveId, 'Rejected');
     };
 
-    // --- END: Modified Handlers for Approve/Reject Actions ---
-
 
     // Render content based on authentication and role
     if (!user) {
@@ -246,7 +222,7 @@ function LeaveApprovals() {
     // Frontend role-based access control - check before rendering the main content
     if (!isManagerOrAdmin) {
          return (
-             <div className="leave-approvals-container"> {/* Use the main container class */}
+             <div className="leave-approvals-container">
                  <h2>Access Denied</h2>
                  <p>You do not have the necessary permissions to view this page.</p>
                  <p><Link to="/dashboard">Back to Dashboard</Link></p>
@@ -286,9 +262,6 @@ function LeaveApprovals() {
                             {/* Display current status explicitly for better clarity */}
                             <th>Status</th>
                             <th>Applied At</th>
-                            {/* Add columns for Processed By/At if needed */}
-                            {/* <th>Processed By</th> */}
-                            {/* <th>Processed At</th> */}
                             <th>Actions</th> {/* Column for Approve/Reject buttons */}
                         </tr>
                     </thead>
@@ -306,9 +279,6 @@ function LeaveApprovals() {
                                 {/* Display current status - useful in Admin view for 'Awaiting_Admin_Approval' */}
                                 <td>{leave.status.replace(/_/g, ' ')}</td> {/* Make status readable */}
                                 <td>{new Date(leave.applied_at).toLocaleString()}</td>
-                                {/* Display Processed By/At if you added those columns to the table */}
-                                {/* <td>{leave.processedBy?.name || 'N/A'}</td> */}
-                                {/* <td>{leave.processed_at ? new Date(leave.processed_at).toLocaleString() : 'N/A'}</td> */}
 
                                 {/* Actions Column */}
                                 <td>
