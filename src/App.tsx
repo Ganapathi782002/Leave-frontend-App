@@ -1,8 +1,5 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/Authcontext";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ApplyLeave from "./pages/ApplyLeave";
@@ -10,12 +7,11 @@ import LeaveApprovals from "./pages/LeaveApprovals";
 import AdminLeaveTypesPage from "./pages/AdminLeaveTypesPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import LeaveCalendar from './pages/LeaveCalendar';
-import { ToastContainer } from 'react-toastify'; // Import ToastContainer
-import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
-    // --- The single top-level Router for the application ---
     <Router>
       <div className="App">
         <Routes>
