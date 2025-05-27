@@ -1,26 +1,24 @@
-import React, { useEffect, useState, useCallback } from 'react'; // Added useCallback
+import { useEffect, useState, useCallback } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import api from '../api/api';
 import { useAuth } from '../hooks/useAuth';
-import './LeaveCalendar.css'; // Make sure this CSS file exists and is linked
+import './LeaveCalendar.css';
 
 const localizer = momentLocalizer(moment);
 
-// Define interfaces for data received from backend calendar endpoint
 interface BackendCalendarEvent {
     leave_id: number;
     title: string;
-    start: string; // ISO date string from backend (e.g., "YYYY-MM-DD")
-    end: string;   // ISO date string from backend (e.g., "YYYY-MM-DD")
+    start: string;
+    end: string;
     userName: string;
     userEmail: string;
     leaveTypeName: string;
     status: 'Pending' | 'Approved' | 'Rejected' | 'Cancelled' | 'Awaiting_Admin_Approval';
 }
 
-// Interface for the events *after* formatting for react-big-calendar
 interface FormattedCalendarEvent {
     leave_id: number;
     title: string;
@@ -33,7 +31,6 @@ interface FormattedCalendarEvent {
     allDay: boolean;
 }
 
-// Define the User interface based on what your useAuth hook provides
 interface User {
     user_id: number;
     email: string;
@@ -52,9 +49,8 @@ function LeaveCalendar() {
     const [events, setEvents] = useState<FormattedCalendarEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [currentDate, setCurrentDate] = useState(new Date()); // State for calendar navigation
+    const [currentDate, setCurrentDate] = useState(new Date());
 
-    // Memoize the fetch function using useCallback if it doesn't need to be recreated on every render
     const fetchCalendarEvents = useCallback(async () => {
         if (authLoading) {
             setLoading(true);
@@ -71,13 +67,8 @@ function LeaveCalendar() {
             const data: BackendCalendarEvent[] = await api('/api/leaves/calendar/leave-availability', 'GET');
 
             const formattedEvents: FormattedCalendarEvent[] = data.map(event => {
-                // Ensure dates are parsed correctly for react-big-calendar
-                // `moment(event.start)` will parse 'YYYY-MM-DD' correctly.
-                // `.toDate()` converts the moment object to a native Date object.
                 const startDate = moment(event.start).toDate();
 
-                // For `react-big-calendar` all-day events, the `end` date is exclusive.
-                // So, if a leave ends on '2025-05-23', the calendar event should end on '2025-05-24'.
                 const endDate = moment(event.end).add(1, 'day').toDate();
 
                 console.log(`Original: ${event.start} - ${event.end}`);
@@ -86,10 +77,10 @@ function LeaveCalendar() {
 
                 return {
                     ...event,
-                    title: `${event.userName} - ${event.leaveTypeName}`, // Display name and leave type
+                    title: `${event.userName} - ${event.leaveTypeName}`,
                     start: startDate,
                     end: endDate,
-                    allDay: true, // Assuming leaves are always all-day events
+                    allDay: true,
                 };
             });
 
@@ -101,20 +92,18 @@ function LeaveCalendar() {
         } finally {
             setLoading(false);
         }
-    }, [user, isAuthenticated, authLoading]); // Dependencies for useCallback
+    }, [user, isAuthenticated, authLoading]);
 
     useEffect(() => {
         fetchCalendarEvents();
-    }, [fetchCalendarEvents]); // Dependency on the memoized fetch function
+    }, [fetchCalendarEvents]);
 
-    // Handler for calendar navigation (prev/next month, day, etc.)
     const handleNavigate = useCallback((newDate: Date) => {
         setCurrentDate(newDate);
     }, []);
 
-    // dayPropGetter for weekend styling
     const dayPropGetter = useCallback((date: Date) => {
-        const day = date.getDay(); // 0 for Sunday, 6 for Saturday
+        const day = date.getDay();
         if (day === 0 || day === 6) {
             return {
                 className: 'weekend-day-cell',
@@ -123,11 +112,9 @@ function LeaveCalendar() {
         return {};
     }, []);
 
-    // eventPropGetter for different leave type colors
     const eventPropGetter = useCallback((event: FormattedCalendarEvent) => {
-        let classNames = ['rbc-event']; // Always include default class
+        let classNames = ['rbc-event'];
 
-        // Add a class based on leave type name
         switch (event.leaveTypeName.toLowerCase()) {
             case 'casual leave':
                 classNames.push('leave-type-casual');
@@ -136,7 +123,7 @@ function LeaveCalendar() {
                 classNames.push('leave-type-sick');
                 break;
             default:
-                classNames.push('leave-type-default'); // Fallback for undefined types
+                classNames.push('leave-type-default');
                 break;
         }
 
@@ -162,7 +149,6 @@ function LeaveCalendar() {
         return <div className="calendar-error">Error: {error}</div>;
     }
 
-    // Custom Event Component to display user name and leave type inside the event
     const EventComponent = ({ event }: { event: FormattedCalendarEvent }) => (
         <div className="calendar-event-content">
             <strong>{event.userName}</strong>
@@ -190,14 +176,12 @@ function LeaveCalendar() {
                 defaultView="month"
                 style={{ height: 700 }}
                 views={['month', 'week', 'day', 'agenda']}
-                // Navigation props
                 date={currentDate}
                 onNavigate={handleNavigate}
-                // Styling props
                 dayPropGetter={dayPropGetter}
                 eventPropGetter={eventPropGetter}
                 components={{
-                    event: EventComponent, // Use the custom event component
+                    event: EventComponent,
                 }}
             />
         </div>
