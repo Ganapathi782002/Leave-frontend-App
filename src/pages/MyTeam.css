@@ -1,0 +1,157 @@
+/* src/pages/MyTeam.css */
+
+.my-team-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+}
+
+.my-team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e0e0e0; /* Thicker border */
+}
+
+.my-team-header h2 {
+    color: #2c3e50; /* Darker, professional blue-grey */
+    font-size: 2.2em; /* Slightly larger title */
+    margin: 0;
+    font-weight: 600;
+}
+
+.back-to-dashboard-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px; /* Slightly more rounded */
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.back-to-dashboard-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px); /* Subtle lift effect */
+}
+
+.my-team-loading,
+.loading-message,
+.error-message,
+.no-data-message {
+    text-align: center;
+    padding: 25px;
+    font-size: 1.2em;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.error-message {
+    color: #dc3545;
+    font-weight: bold;
+    background-color: #ffebe9;
+    border: 1px solid #dc3545;
+}
+
+/* Section styling for separation */
+.team-section {
+    margin-top: 40px;
+    padding: 25px;
+    background-color: #fcfcfc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.team-section h3 {
+    color: #34495e; /* Slightly different header color */
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    border-bottom: 1px dashed #e9ecef; /* Dotted line separator */
+    padding-bottom: 10px;
+    font-weight: 500;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+.my-team-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.9em;
+    min-width: 700px; /* Ensure table doesn't get too squished */
+}
+
+.my-team-table th,
+.my-team-table td {
+    border: 1px solid #e9ecef; /* Lighter border */
+    padding: 14px 18px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.my-team-table thead th {
+    background-color: #eef4f9; /* Light blueish grey header */
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    position: relative;
+    padding-right: 30px; /* Space for sort indicator */
+}
+
+.my-team-table thead th:hover {
+    background-color: #e0e7ed;
+}
+
+/* Sort indicator styling */
+.my-team-table thead th span.sort-indicator {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8em;
+    color: #888;
+}
+
+
+.my-team-table tbody tr:nth-child(even) {
+    background-color: #fdfdfd;
+}
+
+.my-team-table tbody tr:hover {
+    background-color: #f5fafd; /* Very light blue on hover */
+}
+
+.my-team-table td {
+    color: #343a40;
+}
+
+/* Specific styling for the intern table if different */
+.intern-table {
+    /* You can add specific styles here if you want it to look different from employee table */
+    border: 1px solid #d4edda; /* Example: Greenish border for intern table */
+    background-color: #f6fff6;
+}
+
+.intern-table thead th {
+    background-color: #e6ffe6; /* Lighter green header */
+    color: #28a745;
+}
+
+.intern-table tbody tr:hover {
+    background-color: #ebffeb;
+}

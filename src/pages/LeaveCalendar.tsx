@@ -71,9 +71,6 @@ function LeaveCalendar() {
 
                 const endDate = moment(event.end).add(1, 'day').toDate();
 
-                console.log(`Original: ${event.start} - ${event.end}`);
-                console.log(`Formatted: ${startDate.toLocaleString()} - ${endDate.toLocaleString()}`);
-
 
                 return {
                     ...event,
@@ -85,7 +82,6 @@ function LeaveCalendar() {
             });
 
             setEvents(formattedEvents);
-            console.log("LeaveCalendar: Fetched events:", formattedEvents);
         } catch (err: any) {
             console.error("LeaveCalendar: Error fetching calendar events:", err);
             setError(err.message || "Failed to fetch calendar events.");
@@ -174,7 +170,7 @@ function LeaveCalendar() {
                 endAccessor="end"
                 titleAccessor="title"
                 defaultView="month"
-                style={{ height: 700 }}
+                style={{ height: 1200 }}
                 views={['month', 'week', 'day', 'agenda']}
                 date={currentDate}
                 onNavigate={handleNavigate}

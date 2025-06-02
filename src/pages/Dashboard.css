@@ -242,26 +242,66 @@
     cursor: not-allowed;
 }
 
-/* Style for admin test section */
 .admin-test-section {
-    background-color: #fff3cd; /* Light yellow background */
+    background-color: #fff3cd;
     border: 1px solid #ffeeba;
     padding: 15px;
     border-radius: 8px;
     margin-top: 30px;
-    color: #856404; /* Dark yellow text */
+    color: #856404;
 }
 
 .admin-test-section h3 {
-    color: #856404; /* Match text color */
-    border-bottom-color: #ffeeba; /* Light yellow border */
+    color: #856404;
+    border-bottom-color: #ffeeba;
 }
 
-/* Style for unauthenticated/loading messages */
 .dashboard-loading,
 .dashboard-unauthenticated {
     text-align: center;
     font-size: 1.2em;
     color: #666;
     margin-top: 50px;
+}
+
+.approval-history-table td {
+    font-size: 0.95em;
+}
+
+.approval-history-table .action-approved { color: green; font-weight: bold; }
+.approval-history-table .action-rejected { color: red; font-weight: bold; }
+
+.manager-card {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  margin-left: 100px;
+  background-color: #f0f7ff;
+  border: 1px solid #cceeff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-size: 0.95em;
+  color: #333;
+  gap: 8px;
+}
+
+.manager-card.no-manager {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  color: #6c757d;
+}
+
+.manager-card .manager-label {
+  font-weight: 700;
+  color: #0056b3;
+}
+
+.manager-card .manager-name {
+  color: #212529;
+}
+
+.manager-card .manager-email {
+  color: #6c757d;
+  font-size: 0.88em;
 }

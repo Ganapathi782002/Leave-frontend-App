@@ -81,11 +81,9 @@ function LeaveApprovals() {
                 if (user?.role_id === MANAGER_ROLE_ID) {
                   
                     endpoint = '/api/manager/pending-requests';
-                    console.log('Fetching pending requests for Manager from:', endpoint);
                 } else if (user?.role_id === ADMIN_ROLE_ID) {
                     
                     endpoint = '/api/admin/leave-requests/approvals-needed';
-                    console.log('Fetching pending requests for Admin from:', endpoint);
                 } else {
                     
                     setLoading(false);
@@ -98,7 +96,6 @@ function LeaveApprovals() {
                     
                     const pendingData: Leave[] = await api(endpoint, 'GET');
                     setPendingLeaves(pendingData);
-                    console.log('Fetched pending leave requests:', pendingData);
                 }
 
 
@@ -140,10 +137,8 @@ function LeaveApprovals() {
             let endpoint = '';
             if (user.role_id === MANAGER_ROLE_ID) {
                 endpoint = `/api/leaves/status/${leaveId}`;
-                console.log(`Processing leave ${leaveId} as Manager. Calling endpoint: ${endpoint}`);
             } else if (user.role_id === ADMIN_ROLE_ID) {
                 endpoint = `/api/admin/leave-requests/${leaveId}/status`;
-                console.log(`Processing leave ${leaveId} as Admin. Calling endpoint: ${endpoint}`);
             } else {
                 setActionError("Invalid role to process leave requests.");
                 setIsSubmitting(false);
@@ -162,7 +157,6 @@ function LeaveApprovals() {
                 { status }
             );
 
-            console.log(`Leave request ${leaveId} processed with status ${status}:`, response);
             setActionSuccess(`Leave request ${leaveId} ${status.toLowerCase()} successfully.`);
             setPendingLeaves(prevLeaves => prevLeaves.filter(leave => leave.leave_id !== leaveId));
 

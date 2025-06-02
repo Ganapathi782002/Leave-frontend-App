@@ -7,6 +7,7 @@ import LeaveApprovals from "./pages/LeaveApprovals";
 import AdminLeaveTypesPage from "./pages/AdminLeaveTypesPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import LeaveCalendar from './pages/LeaveCalendar';
+import MyTeam from "./pages/MyTeam";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -41,13 +42,17 @@ function App() {
             path="/calendar"
             element={<ProtectedRoute element={<LeaveCalendar />} />}
           />
+          <Route
+            path="/my-team"
+            element={<ProtectedRoute element={<MyTeam />} />}
+          />
           {/* Redirect for the root path - redirects to dashboard if authenticated, or ProtectedRoute handles redirect to login */}
           <Route
             path="/"
             element={<ProtectedRoute element={<Dashboard />} />}
           />
         </Routes>
-        <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
       </div>
     </Router>
   );
