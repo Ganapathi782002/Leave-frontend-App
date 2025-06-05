@@ -74,10 +74,10 @@ const api = async (
       if ((response.status === 401 || response.status === 403) && requiresAuth) {
         console.error(`Authentication error on protected route: ${response.status}`);
         handleLogout();
-        throw { response: { data: errorData, status: response.status } } as StructuredError;
+        throw { message: errorData.message, response: { data: errorData, status: response.status } } as StructuredError;
       }
       console.error(`API Error: ${response.status} - ${errorData.message}`);
-      throw { response: { data: errorData, status: response.status } } as StructuredError;
+      throw { message: errorData.message, response: { data: errorData, status: response.status } } as StructuredError;
     }
     const text: string = await response.text();
     return text ? JSON.parse(text) : {};

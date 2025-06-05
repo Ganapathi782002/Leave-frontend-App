@@ -288,4 +288,3 @@ function AdminLeaveTypesPage() {
 }
 
 export default AdminLeaveTypesPage;
-
