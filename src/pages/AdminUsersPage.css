@@ -1,180 +1,329 @@
 .admin-users-container {
-    max-width: 900px;
-    margin: 20px auto;
     padding: 20px;
-    background-color: #f9f9f9;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-family: sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .admin-users-container h2,
-.admin-users-container h3 {
+.admin-users-container h3,
+.admin-users-container h4 {
     color: #333;
-    border-bottom: 1px solid #eee;
+}
+
+.admin-users-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    color: #007bff; /* Primary color for main title */
+}
+
+.admin-users-container h3 {
+    font-size: 1.4rem;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+    color: #0056b3;
+}
+.admin-users-container h4 {
+    font-size: 1.2rem;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 30px 0;
+}
+
+.section-card {
+    background-color: #fdfdfd;
+    border: 1px solid #e7e7e7;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+/* Form Styling (Create and Edit) */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #454545;
+    font-size: 0.9rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Buttons */
+.action-button,
+.cancel-button, /* General cancel button style for modals */
+.edit-button,
+.delete-button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-right: 8px; /* Default spacing */
+}
+.action-button:last-child,
+.cancel-button:last-child,
+.edit-button:last-child,
+.delete-button:last-child {
+    margin-right: 0;
+}
+
+
+.action-button { /* Primary action like Create User, Save Changes */
+    background-color: #007bff;
+    color: white;
+}
+.action-button:hover {
+    background-color: #0069d9;
+    transform: translateY(-1px);
+}
+.action-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Modal specific cancel button */
+.modal-actions .cancel-button {
+    background-color: #6c757d; /* Grey */
+    color: white;
+}
+.modal-actions .cancel-button:hover {
+    background-color: #5a6268;
+}
+
+
+/* Table action buttons */
+.small-button {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    margin: 0 3px; /* Spacing between edit/delete */
+}
+
+.edit-button.small-button {
+    background-color: #ffc107; /* Yellow */
+    color: #212529;
+}
+.edit-button.small-button:hover {
+    background-color: #e0a800;
+}
+
+.delete-button.small-button {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+.delete-button.small-button:hover {
+    background-color: #c82333;
+}
+
+
+/* Feedback Messages */
+.error-message {
+    color: #dc3545; /* Red */
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+.success-message {
+    color: #155724; /* Green */
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+/* Modal Styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 550px;
+    z-index: 1001;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #007bff; /* Match primary color */
+    border-bottom: 1px solid #dee2e6;
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
-.admin-page-loading,
-.admin-forbidden-container {
-    text-align: center;
-    padding: 50px;
-    font-size: 1.2em;
-    color: #555;
-}
-
-.admin-forbidden-container h2 {
-    color: #d32f2f; /* Red color for denied access */
-}
-
-.create-user-form,
-.admin-user-lists {
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.create-user-form form div {
-    margin-bottom: 15px;
-}
-
-.create-user-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-}
-
-.create-user-form input[type="text"],
-.create-user-form input[type="email"],
-.create-user-form input[type="password"],
-.create-user-form select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Include padding in element's total width */
-}
-
-.create-user-form button[type="submit"] {
-    background-color: #5cb85c; /* Green */
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
-
-.create-user-form button[type="submit"]:hover:not(:disabled) {
-    background-color: #4cae4c; /* Darker green */
-}
-
-.create-user-form button[type="submit"]:disabled {
-    background-color: #d3d3d3;
-    cursor: not-allowed;
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
 }
 
 
-/* --- User Lists Section Styling --- */
 .user-list-buttons {
     margin-bottom: 20px;
-    display: flex; /* Arrange buttons in a row */
-    gap: 10px; /* Space between buttons */
-    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .user-list-buttons button {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #eee;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    background-color: #17a2b8; /* Teal/Info color */
+    color: white;
+    /* Uses .action-button base styles for padding, border-radius etc. */
 }
-
-.user-list-buttons button:hover:not(:disabled) {
-    background-color: #ddd;
-    border-color: #bbb;
+.user-list-buttons button:hover {
+    background-color: #138496;
 }
-
 .user-list-buttons button:disabled {
-     opacity: 0.7;
-     cursor: not-allowed;
+    background-color: #6c757d;
+    opacity: 0.7;
 }
 
-.user-list-display h4 {
-    margin-top: 0;
-    margin-bottom: 15px;
+
+.table-responsive-container {
+    overflow-x: auto; /* Allows horizontal scrolling for the table on small screens */
+    width: 100%;
+}
+
+.users-table {
+    width: 100%;
+    min-width: 700px; /* Ensures table content isn't too squished before scrolling */
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.users-table th,
+.users-table td {
+    border: 1px solid #dee2e6;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.users-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.users-table tbody tr:nth-child(even) {
+    background-color: #fbfcfd;
+}
+
+.users-table tbody tr:hover {
+    background-color: #f1f8ff; /* Light blue hover */
+}
+
+.balance-list-inline {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    font-size: 0.8rem;
     color: #555;
 }
-
-.user-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.balance-list-inline li {
+    margin-bottom: 2px;
+    white-space: nowrap; /* Prevent wrapping for individual balance lines */
+}
+.balance-list-inline li:last-child {
+    margin-bottom: 0;
 }
 
-.user-item {
-    border: 1px solid #ddd;
+
+/* Loading and Forbidden States */
+.admin-page-loading,
+.admin-forbidden-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 20px;
+}
+.admin-forbidden-container h2 {
+    color: #dc3545;
+}
+
+/* General Link style */
+.admin-users-container a {
+    color: #007bff;
+    text-decoration: none;
+}
+.admin-users-container a:hover {
+    text-decoration: underline;
+}
+
+/* Back to Dashboard link */
+.admin-users-container > p > a { /* Targets the final link specifically */
+    display: inline-block;
+    margin-top: 20px;
+    padding: 8px 15px;
+    background-color: #6c757d;
+    color: white;
     border-radius: 4px;
-    padding: 15px;
-    margin-bottom: 15px;
-    background-color: #fdfdfd;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+    font-weight: 500;
 }
-
-.user-main-info strong {
-    color: #0056b3; /* Blue color for names */
+.admin-users-container > p > a:hover {
+    background-color: #5a6268;
+    text-decoration: none;
 }
-
-.user-leave-balances {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px dashed #eee;
-}
-
-.user-leave-balances h5 {
-    margin-top: 0;
-    margin-bottom: 8px;
-    color: #666;
-    font-size: 0.95em;
-}
-
-.balance-list {
-    list-style: disc; /* Use bullet points */
-    padding-left: 20px; /* Indent the list */
-    margin: 0;
-    font-size: 0.9em;
-    color: #444;
-}
-
-.balance-list li {
-    margin-bottom: 5px;
-    line-height: 1.4;
-}
-
-
-/* --- Message Styling --- */
-.error-message {
-    color: red;
-    margin-top: 10px;
-}
-
-/* Style for success messages if you have a separate class */
-/* .success-message {
-    color: green;
-    margin-top: 10px;
-} */
-
-hr {
-    margin: 30px 0;
-    border: 0;
-    border-top: 1px solid #eee;
-}
-
