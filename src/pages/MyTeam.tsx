@@ -1,4 +1,3 @@
-// src/pages/MyTeam.tsx
 import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
@@ -18,12 +17,11 @@ interface TeamMember {
     user_id: number;
     name: string;
     email: string;
-    role_id: number; // Now included from backend
+    role_id: number;
     role_name: string;
     balances: LeaveBalanceDetail[];
 }
 
-// Assuming AuthContextType is consistent (can import if needed or define locally)
 interface AuthUser {
     user_id: number;
     name: string;
@@ -42,7 +40,7 @@ interface AuthContextType {
 }
 
 const MANAGER_ROLE_ID = 3;
-const EMPLOYEE_ROLE_ID = 2; // Make sure these match your database role IDs
+const EMPLOYEE_ROLE_ID = 2;
 const INTERN_ROLE_ID = 4;
 
 const MyTeam: React.FC = () => {
@@ -57,17 +55,14 @@ const MyTeam: React.FC = () => {
     const [employees, setEmployees] = useState<TeamMember[]>([]);
     const [interns, setInterns] = useState<TeamMember[]>([]);
 
-    // Sorting state (will apply to both tables, but primarily useful for employees)
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'ascending' | 'descending' } | null>(null);
 
-    // Redirect logic
     useEffect(() => {
         if (!authLoading && (!isAuthenticated || user?.role_id !== MANAGER_ROLE_ID)) {
             navigate('/dashboard');
         }
     }, [authLoading, isAuthenticated, user, navigate]);
 
-    // Data fetching and categorization logic
     useEffect(() => {
         const fetchTeamData = async () => {
             if (!authLoading && isAuthenticated && user?.role_id === MANAGER_ROLE_ID) {
@@ -75,7 +70,7 @@ const MyTeam: React.FC = () => {
                 setError(null);
                 try {
                     const data: TeamMember[] = await api('/api/team/my-team-balances', 'GET');
-                    setTeamData(data); // Keep raw data for sorting
+                    setTeamData(data);
 
                     // Separate employees and interns
                     const fetchedEmployees: TeamMember[] = [];
@@ -104,7 +99,6 @@ const MyTeam: React.FC = () => {
         fetchTeamData();
     }, [isAuthenticated, user, authLoading]);
 
-    // Memoized sorted data for employees (sorting for interns is less relevant with only one value column)
     const sortedEmployees = useMemo(() => {
         let sortableItems = [...employees];
         if (sortConfig !== null && ['name', 'email'].includes(sortConfig.key)) { // Only sort by name/email
@@ -123,10 +117,9 @@ const MyTeam: React.FC = () => {
         return sortableItems;
     }, [employees, sortConfig]);
 
-    // Memoized sorted data for interns
     const sortedInterns = useMemo(() => {
         let sortableItems = [...interns];
-        if (sortConfig !== null && ['name', 'email'].includes(sortConfig.key)) { // Only sort by name/email
+        if (sortConfig !== null && ['name', 'email'].includes(sortConfig.key)) {
             sortableItems.sort((a, b) => {
                 const aValue = a[sortConfig.key as keyof TeamMember];
                 const bValue = b[sortConfig.key as keyof TeamMember];

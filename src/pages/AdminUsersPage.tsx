@@ -233,7 +233,7 @@ function AdminUsersPage(): JSX.Element {
         setEditUserSuccess(null); 
         setEditUserError(null);
         try {
-            await api(`/api/admin/users/${userId}`, "DELETE"); // Ensure this endpoint exists
+            await api(`/api/admin/users/${userId}`, "DELETE"); // not yet implemented
             setEditUserSuccess(`User "${userName}" deleted successfully. Refreshing list...`);
             await fetchUsersByRole(MANAGER_ROLE_ID, true); 
             await fetchUsersByRole(undefined);      
@@ -292,8 +292,8 @@ function AdminUsersPage(): JSX.Element {
             payload.role_id = newRoleId;
         }
 
-        const newManagerId = editFormState.manager_id; // This can be number, null, or ""
-        if (newManagerId === "" && currentUserToEdit.manager_id !== null) { // Explicitly removing manager
+        const newManagerId = editFormState.manager_id;
+        if (newManagerId === "" && currentUserToEdit.manager_id !== null) {
             payload.manager_id = null;
         } else if (newManagerId !== null && newManagerId !== "" && Number(newManagerId) !== currentUserToEdit.manager_id) {
             payload.manager_id = Number(newManagerId);

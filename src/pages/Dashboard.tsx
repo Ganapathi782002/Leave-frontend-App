@@ -1,36 +1,33 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../hooks/useAuth"; // Assuming this provides the correct AuthContextType
+import { useAuth } from "../hooks/useAuth";
 import api from "../api/api";
 import { Link, useNavigate } from "react-router-dom";
-import "./Dashboard.css"; // Ensure this CSS file exists and is styled as needed
+import "./Dashboard.css";
 
-// Ideally, these constants should be imported from your central constants file
 const ADMIN_ROLE_ID = 1;
 const EMPLOYEE_ROLE_ID = 2;
 const MANAGER_ROLE_ID = 3;
 const INTERN_ROLE_ID = 4;
 
-// --- START: Interface Definitions ---
-// TODO: For better maintainability, import these interfaces from a central types file or their original definition locations.
 interface AuthUser {
     user_id: number;
     name: string;
     email: string;
     role_id: number;
     manager_id?: number | null;
-    manager?: { // This structure comes from the login response
+    manager?: {
         user_id: number;
         name: string;
         email: string;
     } | null;
 }
 
-interface AuthContextType { // This should ideally be imported from AuthContext.tsx
+interface AuthContextType {
     user: AuthUser | null;
     token: string | null;
     isAuthenticated: boolean;
     loading: boolean;
-    login: (newToken: string, newUser: AuthUser) => void; // Ensure AuthUser is used here
+    login: (newToken: string, newUser: AuthUser) => void;
     logout: () => void;
 }
 
@@ -39,15 +36,14 @@ interface LeaveBalance {
     user_id: number;
     type_id: number;
     year: number;
-    total_days: number; // This will hold the parsed number
-    used_days: number;  // This will hold the parsed number
+    total_days: number;
+    used_days: number;
     leaveType: {
         type_id: number;
         name: string;
     };
 }
 
-// For data coming from API before parsing total_days and used_days
 interface RawLeaveBalance extends Omit<LeaveBalance, 'total_days' | 'used_days'> {
     total_days: string | number;
     used_days: string | number;
@@ -58,7 +54,7 @@ interface LeaveRequest {
     leave_id: number;
     user_id: number;
     type_id: number;
-    start_date: string; // Dates are strings from backend, will be converted to Date objects for comparison
+    start_date: string;
     end_date: string;
     reason: string;
     status:
@@ -73,39 +69,34 @@ interface LeaveRequest {
         type_id: number;
         name: string;
     };
-    user?: { // User details for the leave applicant
+    user?: {
         user_id: number;
         name: string;
         email: string;
     };
 }
 
-interface LeaveType { // For AdminLeaveTypes, if fetched
+interface LeaveType {
     type_id: number;
     name: string;
     requires_approval: boolean;
     is_balance_based: boolean;
 }
 
-interface LeaveApproval { // For ApprovalHistory
+interface LeaveApproval {
     approval_id: number;
     leave_id: number;
     approver_id: number;
-    action: "Pending" | "Approved" | "Rejected" | "Cancelled"; // Ensure "Cancelled" is a valid action if used
+    action: "Pending" | "Approved" | "Rejected" | "Cancelled";
     comments?: string;
     approved_at: string;
-    leave: LeaveRequest;  // Nested leave details
-    approver: AuthUser;   // Nested approver details
+    leave: LeaveRequest;
+    approver: AuthUser;
 }
-// --- END: Interface Definitions ---
-
 
 function Dashboard() {
-    // TODO: Resolve the 'as unknown as AuthContextType' cast.
-    // useAuth should ideally return a correctly and fully typed AuthContextType.
     const {
         user,
-        // token, // token is used implicitly by api calls if requiredAuth is true
         logout,
         isAuthenticated,
         loading: authLoading,
@@ -138,13 +129,11 @@ function Dashboard() {
     const isManagerOrAdmin = user && (user.role_id === MANAGER_ROLE_ID || user.role_id === ADMIN_ROLE_ID);
     const isEmployee = user?.role_id === EMPLOYEE_ROLE_ID || user?.role_id === INTERN_ROLE_ID;
 
-
     const fetchLeaveBalances = async () => {
         setLoadingBalances(true);
         setErrorBalances(null);
         try {
             const balancesDataFromApi: RawLeaveBalance[] = await api("/api/leaves/balance", "GET");
-            
             const processedBalances: LeaveBalance[] = balancesDataFromApi.map((balance) => ({
                 ...balance,
                 total_days: parseFloat(String(balance.total_days)),
@@ -237,29 +226,27 @@ function Dashboard() {
         }
     }, [authLoading, isAuthenticated, isAdmin, user]);
 
-
     useEffect(() => {
-        let successTimerId: number | undefined; // Use undefined for initial state
+        let successTimerId: number | undefined;
         let errorTimerId: number | undefined;
 
         if (cancelSuccess) {
             successTimerId = window.setTimeout(() => {
                 setCancelSuccess(null);
-            }, 3000); 
+            }, 3000);
         }
 
         if (cancelError) {
             errorTimerId = window.setTimeout(() => {
                 setCancelError(null);
-            }, 5000); 
+            }, 5000);
         }
 
-        return () => { 
+        return () => {
             if (successTimerId) window.clearTimeout(successTimerId);
             if (errorTimerId) window.clearTimeout(errorTimerId);
         };
     }, [cancelSuccess, cancelError]);
-
 
     const handleCancelLeave = async (leaveId: number, wasApproved: boolean) => {
         if (!window.confirm("Are you sure you want to cancel this leave request?")) {
@@ -267,7 +254,7 @@ function Dashboard() {
         }
 
         setCancellingLeaveId(leaveId);
-        setCancelError(null); 
+        setCancelError(null);
         setCancelSuccess(null);
 
         try {
@@ -284,7 +271,7 @@ function Dashboard() {
             setCancelSuccess(`Leave request ${leaveId} cancelled successfully.`);
 
             if (wasApproved) {
-                await fetchLeaveBalances(); 
+                await fetchLeaveBalances();
             }
 
         } catch (err: any) {
@@ -297,7 +284,7 @@ function Dashboard() {
     };
 
     const handleLogout = () => {
-        logout(); 
+        logout();
         navigate("/login");
     };
 
@@ -307,7 +294,7 @@ function Dashboard() {
 
     if (!isAuthenticated || !user) {
         console.warn("Dashboard rendered without user/authentication after authLoading is false.");
-        navigate("/login", { replace: true }); 
+        navigate("/login", { replace: true });
         return <div className="dashboard-unauthenticated">Not authenticated. Redirecting to login...</div>;
     }
 
@@ -331,10 +318,8 @@ function Dashboard() {
             </p>
             <hr />
 
-            {/* Action Feedback Area for Cancellation */}
-            {cancelSuccess && <p className="success-message" style={{ color: 'green' }}>{cancelSuccess}</p>}
-            {cancelError && <p className="error-message" style={{ color: 'red' }}>Error: {cancelError}</p>}
-
+            {cancelSuccess && <p className="success-message">{cancelSuccess}</p>}
+            {cancelError && <p className="error-message">{cancelError}</p>}
 
             <h3>Navigation</h3>
             <div className="dashboard-nav">
@@ -364,7 +349,7 @@ function Dashboard() {
                     <h3>Your Leave Balances</h3>
                     {loadingBalances && <p className="loading-message">Loading leave balances...</p>}
                     {!loadingBalances && errorBalances && !userLeaveBalances.length && (
-                        <p className="error-message" style={{ color: "red" }}>Error: {errorBalances}</p>
+                        <p className="error-message">{errorBalances}</p>
                     )}
                     {!loadingBalances && !errorBalances && userLeaveBalances.length > 0 && (
                         <table className="leave-table balances-table">
@@ -380,11 +365,11 @@ function Dashboard() {
                             <tbody>
                                 {userLeaveBalances.map((balance) => (
                                     <tr key={balance.balance_id}>
-                                        <td>{balance.leaveType?.name || "N/A"}</td>
-                                        <td>{balance.year}</td>
-                                        <td>{balance.total_days.toFixed(2)}</td>
-                                        <td>{balance.used_days.toFixed(2)}</td>
-                                        <td>{(balance.total_days - balance.used_days).toFixed(2)}</td>
+                                        <td data-label="Leave Type">{balance.leaveType?.name || "N/A"}</td>
+                                        <td data-label="Year">{balance.year}</td>
+                                        <td data-label="Total Days">{balance.total_days.toFixed(2)}</td>
+                                        <td data-label="Used Days">{balance.used_days.toFixed(2)}</td>
+                                        <td data-label="Available Days">{(balance.total_days - balance.used_days).toFixed(2)}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -402,7 +387,7 @@ function Dashboard() {
                     <h3>Your Leave Request History</h3>
                     {loadingHistory && <p className="loading-message">Loading leave history...</p>}
                     {!loadingHistory && errorHistory && !userLeaveRequests.length && (
-                        <p className="error-message" style={{ color: "red" }}>Error: {errorHistory}</p>
+                        <p className="error-message">{errorHistory}</p>
                     )}
                     {!loadingHistory && !errorHistory && userLeaveRequests.length > 0 && (
                         <table className="leave-table history-table">
@@ -429,26 +414,15 @@ function Dashboard() {
 
                                     return (
                                         <tr key={request.leave_id}>
-                                            <td>{request.leaveType?.name || "N/A"}</td>
-                                            <td>{new Date(request.start_date).toLocaleDateString()}</td>
-                                            <td>{new Date(request.end_date).toLocaleDateString()}</td>
-                                            <td>{request.reason}</td>
-                                            <td
-                                                className={`status-${request.status.toLowerCase().replace(/_/g, '-')}`}
-                                                style={{
-                                                    color:
-                                                        request.status === "Approved" ? "green"
-                                                        : request.status === "Rejected" ? "red"
-                                                        : request.status === "Pending" ? "orange"
-                                                        : request.status === "Cancelled" ? "grey"
-                                                        : request.status === "Awaiting_Admin_Approval" ? "blueviolet"
-                                                        : "black",
-                                                }}
-                                            >
+                                            <td data-label="Leave Type">{request.leaveType?.name || "N/A"}</td>
+                                            <td data-label="Start Date">{new Date(request.start_date).toLocaleDateString()}</td>
+                                            <td data-label="End Date">{new Date(request.end_date).toLocaleDateString()}</td>
+                                            <td data-label="Reason">{request.reason}</td>
+                                            <td data-label="Status" className={`status-${request.status.toLowerCase().replace(/_/g, '-')}`}>
                                                 {request.status.replace(/_/g, " ")}
                                             </td>
-                                            <td>{new Date(request.applied_at).toLocaleString()}</td>
-                                            <td>
+                                            <td data-label="Applied At">{new Date(request.applied_at).toLocaleString()}</td>
+                                            <td data-label="Actions">
                                                 {(canCancelPending || canCancelApproved) && (
                                                     <button
                                                         className="cancel-button"
@@ -477,7 +451,7 @@ function Dashboard() {
                     <h3>{isAdmin ? "All Approval History" : "Your Approval History"}</h3>
                     {loadingApprovals && <p className="loading-message">Loading approval history...</p>}
                     {!loadingApprovals && errorApprovals && (
-                        <p className="error-message" style={{ color: "red" }}>Error: {errorApprovals}</p>
+                        <p className="error-message">{errorApprovals}</p>
                     )}
                     {!loadingApprovals && !errorApprovals && approvalHistory.length > 0 && (
                         <table className="leave-table approval-history-table">
@@ -496,21 +470,16 @@ function Dashboard() {
                             <tbody>
                                 {approvalHistory.map((approval) => (
                                     <tr key={approval.approval_id}>
-                                        <td>{approval.leave.user?.name || "N/A"}</td>
-                                        <td>{approval.leave.leaveType?.name || "N/A"}</td>
-                                        <td>{new Date(approval.leave.start_date).toLocaleDateString()}</td>
-                                        <td>{new Date(approval.leave.end_date).toLocaleDateString()}</td>
-                                        <td>{approval.leave.reason}</td>
-                                        <td
-                                            className={`status-${approval.action.toLowerCase()}`}
-                                            style = {{
-                                                color: approval.action === "Approved" ? "green" : approval.action === "Rejected" ? "red" : "black"
-                                            }}
-                                        >
+                                        <td data-label="Applicant Name">{approval.leave.user?.name || "N/A"}</td>
+                                        <td data-label="Leave Type">{approval.leave.leaveType?.name || "N/A"}</td>
+                                        <td data-label="Start Date">{new Date(approval.leave.start_date).toLocaleDateString()}</td>
+                                        <td data-label="End Date">{new Date(approval.leave.end_date).toLocaleDateString()}</td>
+                                        <td data-label="Reason">{approval.leave.reason}</td>
+                                        <td data-label="Action Taken" className={`status-${approval.action.toLowerCase()}`}>
                                             {approval.action.replace(/_/g, " ")}
                                         </td>
-                                        <td>{approval.approver?.name || "N/A"}</td>
-                                        <td>{new Date(approval.approved_at).toLocaleString()}</td>
+                                        <td data-label="Approver">{approval.approver?.name || "N/A"}</td>
+                                        <td data-label="Action At">{new Date(approval.approved_at).toLocaleString()}</td>
                                     </tr>
                                 ))}
                             </tbody>

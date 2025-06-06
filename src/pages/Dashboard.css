@@ -1,307 +1,186 @@
 .dashboard-container {
-    max-width: 960px; /* Limit content width */
-    margin: 30px auto; /* Center content horizontally */
-    padding: 25px; /* Increased padding */
-    background-color: #ffffff; /* White background */
-    border-radius: 10px; /* Slightly more rounded corners */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* More prominent shadow */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A pleasant sans-serif font */
-    color: #333; /* Default text color */
-    line-height: 1.6; /* Improved readability */
-}
-
-/* Styling for page titles/section headings */
-.dashboard-container h2,
-.dashboard-container h3 {
-    color: #0056b3; /* A shade of blue for headings */
-    margin-bottom: 15px;
-    border-bottom: 2px solid #007bff; /* Blue bottom border */
-    padding-bottom: 8px; /* More space below border */
-    margin-top: 25px; /* Space above headings */
-}
-
-/* Remove top margin for the very first heading */
-.dashboard-container h2:first-child {
-    margin-top: 0;
-}
-/* Remove top margin for the first h3 after h2 */
-.dashboard-container h3:first-of-type {
-    margin-top: 20px; /* Less margin if directly after h2 */
-}
-
-
-/* Styling for the welcome message */
-.welcome-message {
-    text-align: center; /* Center the welcome text */
-    margin-bottom: 30px;
     padding: 15px;
-    background-color: #eef; /* Very light blue background */
-    border-radius: 8px;
-    border: 1px solid #cce; /* Light border */
-    font-size: 1.1em; /* Slightly larger font */
-    color: #003366; /* Dark blue text */
+    max-width: 1200px;
+    margin: 20px auto;
 }
 
-.welcome-message strong {
-    color: #007bff; /* Highlight username in standard blue */
+.dashboard-container h2, .dashboard-container h3 {
+    color: #333;
 }
 
-/* Styling for user role info */
-.user-role-info {
+.page-title {
     text-align: center;
-    margin-top: -20px; /* Pull it up closer to the welcome message */
-    margin-bottom: 30px;
-    color: #666;
-    font-size: 0.95em;
+    font-size: 1.8rem;
+    color: #0056b3;
+    margin-bottom: 20px;
 }
 
+.welcome-message {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
 
-/* Styling for the navigation section container */
+.manager-card {
+    background-color: #f0f8ff;
+    border-left: 4px solid #007bff;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 25px 0;
+}
+
 .dashboard-nav {
-    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-nav .nav-link a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.dashboard-nav .nav-link a:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.leave-table {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.leave-table thead {
+    display: none;
+}
+
+.leave-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.leave-table tr {
+    display: block;
     padding: 15px;
-    background-color: #f2f2f2; /* Light gray background */
-    border-radius: 8px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+    background-color: #fff;
+    border: 1px solid #e7e7e7;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-.dashboard-nav h3 {
-     margin-top: 0; /* Remove top margin if it's the first element in the nav block */
-    border-bottom: none; /* No separator inside nav block */
-    margin-bottom: 15px; /* Space below nav heading */
-    padding-bottom: 0;
-    color: #555; /* Darker gray for nav heading */
-}
-
-.dashboard-nav ul {
-    list-style: none; /* Remove default list bullets */
-    padding: 0;
-    margin: 0;
-    display: flex; /* Arrange links in a row */
-    gap: 25px; /* Increased space between links */
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    justify-content: center; /* Center the links horizontally */
-}
-
-/* Styling for individual navigation link paragraphs */
-.dashboard-nav .nav-link { /* Use the class added in JSX */
-    margin: 0; /* Remove default paragraph margin */
-    padding: 0;
-}
-
-.dashboard-nav a {
-    text-decoration: none; /* Remove underline */
-    color: #007bff; /* Blue link color */
-    font-weight: bold;
-    font-size: 1.05em; /* Slightly larger font */
-    transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out; /* Smooth transition */
-    padding-bottom: 2px; /* Space for underline effect */
-}
-
-.dashboard-nav a:hover {
-    color: #0056b3; /* Darker blue on hover */
-    text-decoration: underline; /* Underline on hover */
-}
-
-
-/* Styling for role-specific sections (e.g., Manager's team requests, personal history/balances) */
-.role-specific-section { /* General class for these blocks */
-    margin-top: 30px; /* Space above each section */
-    padding-top: 20px;
-    border-top: 1px solid #ddd; /* Separator from previous section */
-}
-
-/* Specific margin adjustments for the first role-specific section if needed */
-.role-specific-section:first-of-type {
-    margin-top: 0; /* If it's the first block after nav */
-    border-top: none;
-    padding-top: 0;
-}
-
-
-/* Styling for tables (reused and enhanced) */
-.leave-table { /* Common class for all tables */
-    width: 100%; /* Full width */
-    border-collapse: collapse; /* Collapse borders between cells */
-    margin-top: 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtle shadow for tables */
-}
-
-.leave-table th,
 .leave-table td {
-    border: 1px solid #ddd; /* Light gray border */
-    padding: 12px; /* Increased padding */
-    text-align: left; /* Align text to the left */
-    vertical-align: top; /* Align cell content to the top */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 8px 0;
+    border-bottom: 1px dotted #ccc;
 }
 
-.leave-table th {
-    background-color: #007bff; /* Blue background for headers */
-    color: white; /* White text */
+.leave-table td:last-child {
+    border-bottom: none;
+}
+
+.leave-table td::before {
+    content: attr(data-label);
     font-weight: bold;
-    text-transform: uppercase; /* Uppercase headers */
-    font-size: 0.9em;
-    letter-spacing: 0.05em;
+    text-align: left;
+    margin-right: 10px;
+    color: #555;
 }
 
-.leave-table tbody tr:nth-child(even) {
-    background-color: #f8f8f8; /* Lighter zebra striping */
+@media (min-width: 768px) {
+    .leave-table {
+        border-collapse: collapse;
+    }
+
+    .leave-table thead {
+        display: table-header-group;
+    }
+    
+    .leave-table tbody {
+        display: table-row-group;
+    }
+
+    .leave-table tr {
+        display: table-row;
+        border: none;
+        box-shadow: none;
+    }
+     .leave-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .leave-table td {
+        display: table-cell; /* Revert cells */
+        text-align: left;
+        padding: 12px 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Hide the pseudo-element labels on desktop */
+    .leave-table td::before {
+        display: none;
+    }
 }
 
-.leave-table tbody tr:hover {
-    background-color: #eef; /* Very light blue highlight on hover */
-}
 
-/* Styling for status text in tables (using classes now) */
-.leave-table td.status-pending { color: orange; font-weight: bold; } /* Added classes */
-.leave-table td.status-approved { color: green; font-weight: bold; }
-.leave-table td.status-rejected { color: red; font-weight: bold; }
-.leave-table td.status-cancelled { color: grey; font-weight: bold; }
-.leave-table td.status-awaiting_admin_approval { color: blue; font-weight: bold;}
-
-
-/* Styling for action buttons in tables (reused and enhanced) */
-.leave-table td button { /* Target buttons within table cells */
-    padding: 8px 15px; /* Increased padding */
+/* Specific status/button styling */
+.cancel-button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    background-color: #dc3545;
+    color: white;
     border: none;
-    border-radius: 5px; /* Slightly more rounded */
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.2s ease-in-out, opacity 0.2s ease-in-out; /* Add opacity transition */
-    margin-right: 8px; /* Space between buttons */
 }
-
-.leave-table td button:last-child {
-    margin-right: 0;
-}
-
-.leave-table td button:disabled {
-    opacity: 0.6; /* Make disabled buttons semi-transparent */
+.cancel-button:disabled {
+    background-color: #6c757d;
     cursor: not-allowed;
 }
 
-/* Specific button styles */
-.leave-table .approve-button { background-color: #28a745; color: white; }
-.leave-table .approve-button:hover:not(:disabled) { background-color: #218838; }
+/* Status colors */
+.status-approved { color: #28a745; font-weight: bold; }
+.status-rejected { color: #dc3545; font-weight: bold; }
+.status-pending { color: #fd7e14; font-weight: bold; }
+.status-cancelled { color: #6c757d; font-weight: bold; }
+.status-awaiting-admin-approval { color: #6610f2; font-weight: bold; }
 
-.leave-table .reject-button { background-color: #dc3545; color: white; }
-.leave-table .reject-button:hover:not(:disabled) { background-color: #c82333; }
-
-.leave-table .cancel-button { background-color: #ffc107; color: #212529; }
-.leave-table .cancel-button:hover:not(:disabled) { background-color: #e0a800; }
-
-
-/* Styling for messages (loading, error, no data) */
-.dashboard-container p {
-    margin-bottom: 10px;
-}
-
-.loading-message { /* Added class */
-    font-style: italic;
-    color: #666;
-    text-align: center; /* Center loading messages */
-    margin-top: 15px;
-}
-
-.error-message { /* Reused class */
-     color: #dc3545;
-     font-weight: bold;
-     margin-top: 15px;
-     text-align: center;
-}
-
-.no-data-message { /* Added class */
-    text-align: center;
-    font-style: italic;
-    color: #666;
-    margin-top: 15px;
-}
-
-
-/* Styling for the Logout button */
-.logout-button { /* Added class */
-    display: block; /* Make it a block element */
-    width: auto; /* Auto width based on content */
-    margin: 30px auto 10px auto; /* Center horizontally, space above */
-    padding: 10px 20px;
-    background-color: #6c757d; /* Gray color for logout */
+/* Logout button */
+.logout-button {
+    display: block;
+    width: fit-content;
+    margin: 40px auto 20px;
+    padding: 10px 25px;
+    background-color: #343a40;
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 1em;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    font-size: 1rem;
 }
-
-.logout-button:hover:not(:disabled) {
-    background-color: #5a6268; /* Darker gray */
-}
-
-.logout-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.admin-test-section {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 30px;
-    color: #856404;
-}
-
-.admin-test-section h3 {
-    color: #856404;
-    border-bottom-color: #ffeeba;
-}
-
-.dashboard-loading,
-.dashboard-unauthenticated {
-    text-align: center;
-    font-size: 1.2em;
-    color: #666;
-    margin-top: 50px;
-}
-
-.approval-history-table td {
-    font-size: 0.95em;
-}
-
-.approval-history-table .action-approved { color: green; font-weight: bold; }
-.approval-history-table .action-rejected { color: red; font-weight: bold; }
-
-.manager-card {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 8px;
-  padding: 8px 15px;
-  border-radius: 20px;
-  margin-left: 100px;
-  background-color: #f0f7ff;
-  border: 1px solid #cceeff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  font-size: 0.95em;
-  color: #333;
-  gap: 8px;
-}
-
-.manager-card.no-manager {
-  background-color: #f8f9fa;
-  border-color: #e9ecef;
-  color: #6c757d;
-}
-
-.manager-card .manager-label {
-  font-weight: 700;
-  color: #0056b3;
-}
-
-.manager-card .manager-name {
-  color: #212529;
-}
-
-.manager-card .manager-email {
-  color: #6c757d;
-  font-size: 0.88em;
+.logout-button:hover {
+    background-color: #23272b;
 }
